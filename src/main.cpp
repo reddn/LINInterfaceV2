@@ -84,5 +84,6 @@ void loop() {
 	if((millis() - readLEDblinkLastChange) > mainLedBlinkTimer){
 		digitalWrite(STATUS_LED,!digitalRead(STATUS_LED));
 		readLEDblinkLastChange = millis();
+		handleLkasFromCanV3();
 	} 
 }
