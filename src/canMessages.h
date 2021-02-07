@@ -27,20 +27,21 @@ void handleLkasFromCanV3();
 
 void buildSteerMotorTorqueCanMsg(){ //TODO: add to decclaration
 	//outputSerial.print("\nSendingSteer TOrque Can MSg");
-	msgFrm msg; // move this to a global to save the assignment of id and len
-	msg.txMsgID = 427;
-	msg.txMsgLen = 3;
-	msg.txMsg.bytes[0] = (EPStoLKASBuffer[2] << 4 ) & B1000000;  //1 LSB bit of bigSteerTorque 
-	msg.txMsg.bytes[0] |= EPStoLKASBuffer[3] & B01111111 ; // all of SmallSteerTorque
-	msg.txMsg.bytes[1] = ( EPStoLKASBuffer[2] >> 4 ) & B00000011; // 2 MSB of bigSteerTorque
-	msg.txMsg.bytes[1] |= ( EPStoLKASBuffer[1] << 2 ) & B10000000;  // this is output_disabled_inverted
-	msg.txMsg.bytes[1] |= ( EPStoLKASBuffer[2] << 2 )& B00011100; //UNK_3bit_1
-	msg.txMsg.bytes[1] |=  EPStoLKASBuffer[2] & B01000000; //output_disabled
+	// msgFrm msg; // move this to a global to save the assignment of id and len
+	CAN_message_t msg;
+	msg.id = 427;
+	msg.len = 3;
+	msg.buf[0] = (EPStoLKASBuffer[2] << 4 ) & B1000000;  //1 LSB bit of bigSteerTorque 
+	msg.buf[0] |= EPStoLKASBuffer[3] & B01111111 ; // all of SmallSteerTorque
+	msg.buf[1] = ( EPStoLKASBuffer[2] >> 4 ) & B00000011; // 2 MSB of bigSteerTorque
+	msg.buf[1] |= ( EPStoLKASBuffer[1] << 2 ) & B10000000;  // this is output_disabled_inverted
+	msg.buf[1] |= ( EPStoLKASBuffer[2] << 2 )& B00011100; //UNK_3bit_1
+	msg.buf[1] |=  EPStoLKASBuffer[2] & B01000000; //output_disabled
 	
-	msg.txMsg.bytes[2] = (OPCanCounter << 4 ); // put in the counter
-	msg.txMsg.bytes[2] |= honda_compute_checksum(&msg.txMsg.bytes[0],3,(unsigned int)msg.txMsgID);
+	msg.buf[2] = (OPCanCounter << 4 ); // put in the counter
+	msg.buf[2] |= honda_compute_checksum(&msg.buf[0],3,(unsigned int)msg.id);
 	// FCAN.write(msg);
-	can.transmit(msg.txMsgID,msg.txMsg.bytes, msg.txMsgLen);
+	can.transmit(msg.id, msg.buf, msg.len);
 }
 
 

@@ -85,5 +85,10 @@ void loop() {
 		digitalWrite(STATUS_LED,!digitalRead(STATUS_LED));
 		readLEDblinkLastChange = millis();
 		handleLkasFromCanV3();
+		int txMsgID = 0x069;
+		uint8_t txData[8]{0x00, 0x01, 0x23, 0x45, 0xab, 0xcd, 0xef, 0xff};
+		uint8_t txDataLen = 8;
+		can.transmit(txMsgID, txData, txDataLen);
+
 	} 
 }
