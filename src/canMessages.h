@@ -103,7 +103,7 @@ void handleLkasFromCanV3(){
 //  SG_ SET_ME_X00 : 31|8@0+ (1,0) [0|0] "" EPS
 //  SG_ COUNTER : 37|2@0+ (1,0) [0|3] "" EPS
 //  SG_ CHECKSUM : 35|4@0+ (1,0) [0|3] "" EPS
-
+digitalToggle(BLUE_LED);
 #ifdef DEBUG_PRINT_OPtoCAN_INPUT
 	outputSerial.print("\nCANmsg rcvd id: ");
 	outputSerial.print(canmsg.txMsgID,DEC);
@@ -171,6 +171,7 @@ void handleLkasFromCanV3(){
 	OPSteeringControlMessageStatusPending = true;
 	OPTimeLastCANRecieved = millis();
 	createKLinMessageWBigSteerAndLittleSteer(OPBigSteer,OPLittleSteer);
+	buildSteerStatusCanMsg();
 }
 
 

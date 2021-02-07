@@ -64,7 +64,8 @@ void setup() {
 	// canSetup();
 	// FCAN.begin();
 	// FCAN.setBaudRate(500000);
-	can.filterMask16Init(0, 0xE4, 0x7ff); //TODO: confirm this mask is done correctly.. what is  filter 0 and filter 1?
+	can.begin(STD_ID_LEN, BR500K, PORTB_8_9_XCVR);
+    can.filterList16Init(0,0xe4,0,0,0);
 	canMsg.busConfig = PORTB_8_9_XCVR;
 
 }
