@@ -14,12 +14,6 @@ void createKLinMessage(int16_t applySteer);
 //Since everyting is triggered by the stock LKAS(MCU), the counter bits are synced on those messages.
 // so if there is no LKAStoEPS message from the stock MCU, nothing will be sent by this device.  i could change this later, but probably not
 void createKLinMessage(int16_t applySteer){
-	uint8_t msg[4];
-	msg[0] = 0;
-	msg[1] = 0;
-	msg[2] = 0;
-	msg[3] = 0;
-
 	//max is 255, min is -256 in the apply steer PID, if its outside of that (it shouldnt be), then put it 
 	//back at 255 or -256
 	if (applySteer > 255) applySteer = 255; // 0xFF or B0 1111 1111
@@ -36,23 +30,23 @@ void createKLinMessage(int16_t applySteer){
 	if(applySteer < 0 ) bigSteerSign = B00001000; 
 	//get the bigsteer (3 MSB, exlcuding the sign bit) and add(OR) the sign
 	bigSteer =  ( (applySteer >> 5) & 0x7 ) | bigSteerSign;  // 0x7 = 0000 0111  
-	msg[0] = (incomingMsg.counterBit << 5) |  bigSteer;
+	// msg[0] = (incomingMsg.counterBit << 5) |  bigSteer;
 	
 	
-	//get the little steer in the 2nd byte. its the last 5 bits of applysteer. also add in the 0xA0 = 1010 0000
+	// //get the little steer in the 2nd byte. its the last 5 bits of applysteer. also add in the 0xA0 = 1010 0000
 	uint8_t littleSteer = (uint8_t) applySteer & 0x1F; // 0x1F = 0001 1111 ... Change only the last 5 bits
-	msg[1] = littleSteer | 0xA0;  // 1010 0000
-	//								   ^ lkas on
-	msg[2] = 0x80; // this is static 0x80 = 1000 0000
+	// msg[1] = littleSteer | 0xA0;  // 1010 0000
+	// //								   ^ lkas on
+	// msg[2] = 0x80; // this is static 0x80 = 1000 0000
 	
-	msg[3] = chksm(msg[0], msg[1], msg[2]);
+	// msg[3] = chksm(msg[0], msg[1], msg[2]);
 
 	
-		LKAStoEPS_Serial.write(msg[0]);
-		LKAStoEPS_Serial.write(msg[1]);
-		LKAStoEPS_Serial.write(msg[2]);
-		LKAStoEPS_Serial.write(msg[3]);
-	
+		// LKAStoEPS_Serial.write(msg[0]);
+		// LKAStoEPS_Serial.write(msg[1]);
+		// LKAStoEPS_Serial.write(msg[2]);
+		// LKAStoEPS_Serial.write(msg[3]);
+	createKLinMessageWBigSteerAndLittleSteer(bigSteer,littleSteer);
 #ifdef DEBUG_PRINT_LKAStoEPS_OUTPUT
 	outputSerial.print("\nC-");
 	printArrayInBinary(&msg[0],4);
@@ -89,7 +83,7 @@ void createKLinMessageWBigSteerAndLittleSteer(uint8_t bigSteer, uint8_t littleSt
 	outputSerial.print("\nL-O:");
 	printArrayInBinary(&msg[0],4);
 #endif
-	CAN_message_t thisCanMsg;
+	CAN_msg_t thisCanMsg;
 	thisCanMsg.id = 0x200;
 	thisCanMsg.len = 6;
 	thisCanMsg.buf[0] = msg[0];
@@ -100,7 +94,8 @@ void createKLinMessageWBigSteerAndLittleSteer(uint8_t bigSteer, uint8_t littleSt
 	thisCanMsg.buf[4] |=  bigSteer << 5;
 	thisCanMsg.buf[5] = bigSteer >> 3;
 	// FCAN.write(thisCanMsg);
-	can.transmit(thisCanMsg.id,thisCanMsg.buf, thisCanMsg.len);
+	// can.transmit(thisCanMsg.id,thisCanMsg.buf, thisCanMsg.len);
+	sendCanMsg(&thisCanMsg);
 }
 
 
