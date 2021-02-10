@@ -30,12 +30,14 @@ void handleInputReads(){
 			LkasFromCanStatus = 2;
 		} else if(!LkasFromCanFatalError) LkasFromCanChecksumErrorCount = 0;
 
-
 		if(	(millis() - OPTimeLastCANRecieved) > 50 ){
 			OPSteeringControlMessageStatusPending = false;
 			LkasFromCanFatalError = true;
 			LkasFromCanStatus = 1;
 		}
+		buildSteerMotorTorqueCanMsg();
+		buildSteerStatusCanMsg();
+		createKLinMessageWBigSteerAndLittleSteer(3,3);
 
 		lastDigitalReadTime = millis();
 	} // end if true

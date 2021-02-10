@@ -93,7 +93,7 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 	msg.buf[2] = (OPCanCounter << 4 ); // put in the counter
 	msg.buf[2] |= honda_compute_checksum(&msg.buf[0],3,(unsigned int) msg.id);
 	// FCAN.write(msg);
-	sendCanMsg(&msg);;
+	sendCanMsg(&msg);
 }
 // struct msgFrm
 // {
@@ -171,7 +171,7 @@ void handleLkasFromCanV3(){
 	// set big/small steer in varible and that LKAS is on
 	// so when its time to send a LKAS message, it just reads the data, make the checksum and send it
 	if(counterVerified && checksumVerified){
-		// createKLinMessageWBigSteerAndLittleSteer(lclBigSteer,lclLittleSteer);
+		createKLinMessageWBigSteerAndLittleSteer(lclBigSteer,lclLittleSteer);
 		
 		OPBigSteer = lclBigSteer;
 		OPLittleSteer = lclLittleSteer;
