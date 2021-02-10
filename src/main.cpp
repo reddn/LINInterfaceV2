@@ -22,7 +22,7 @@ void handleInputReads(){
 		if( (millis() - OPTimeLastCANRecieved) < 1000 ) mainLedBlinkTimer = 200;
 		else mainLedBlinkTimer = 2000; 
 		
-		//digitalWrite(BLUE_LED,( EPStoLKASBuffer[2] >> 2 ) & B00000001);
+		digitalWrite(BLUE_LED,( EPStoLKASBuffer[2] >> 2 ) & B00000001);
 		
 		if(LkasFromCanChecksumErrorCount > 2){
 			OPSteeringControlMessageStatusPending = false;
@@ -77,18 +77,7 @@ void loop() {
   handleEPStoLKAS();
   handleInputReads();
 
-  if(can.receive(zeroVal,canMsg.txMsgID,canMsg.txMsg.bytes) > -1){
-		handleLkasFromCanV3();
-	}
-  
-	if((millis() - readLEDblinkLastChange) > mainLedBlinkTimer){
-		digitalWrite(STATUS_LED,!digitalRead(STATUS_LED));
-		readLEDblinkLastChange = millis();
-		handleLkasFromCanV3();
-		int txMsgID = 0x069;
-		uint8_t txData[8]{0x00, 0x01, 0x23, 0x45, 0xab, 0xcd, 0xef, 0xff};
-		uint8_t txDataLen = 8;
-		can.transmit(txMsgID, txData, txDataLen);
-
-	} 
+  if(can.receive(canMsg.txMsgID,zeroVal,canMsg.txMsg.bytes) > -1){
+	handleLkasFromCanV3();
+  }
 }

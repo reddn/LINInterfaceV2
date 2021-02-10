@@ -186,12 +186,6 @@ void handleLkasFromCanV3(){
 	OPSteeringControlMessageStatusPending = true;
 	OPTimeLastCANRecieved = millis();
 
-	buildSteerStatusCanMsg(); // no need for this.. testing only .. wrong place alsooo
-	buildSteerStatusCanMsg();
-	buildSteerMotorTorqueCanMsg();
-	buildSteerStatusCanMsg(); // no need for this.. testing only .. wrong place alsooo
-	buildSteerStatusCanMsg();
-	buildSteerMotorTorqueCanMsg();
 }
 
 
