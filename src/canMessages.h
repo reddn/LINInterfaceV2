@@ -76,24 +76,24 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 	
 	// outputSerial.print("\nsending Steer Status Cna MSg");
 	// CAN_message_t msg; // move this to a global so you dont have to re assign the id and len
-	msgFrm msg;
-	msg.txMsgID = 399;
-	msg.txMsgLen = 3U;
-	msg.txMsg.bytes[0] = EPStoLKASBuffer[0] << 5;   // 3 LSB of BigSteerTorque (4bit)
-	msg.txMsg.bytes[0] |= EPStoLKASBuffer[1] & B00011111; // all of smallSteerTorque
-	msg.txMsg.bytes[0] = ~msg.txMsg.bytes[0]; // invert the whole message to make negative positive, positive negative.  OP wants left positive (why??)
-	msg.txMsg.bytes[1] =  ( ~(  EPStoLKASBuffer[0] >>3 ) )   & B00000001; // 1st MSB of bigSteerTorque (4bit) ... added NOT (~) to invert the sign
+	CAN_msg_t msg;
+	msg.id = 399;
+	msg.len = 3U;
+	msg.buf[0] = EPStoLKASBuffer[0] << 5;   // 3 LSB of BigSteerTorque (4bit)
+	msg.buf[0] |= EPStoLKASBuffer[1] & B00011111; // all of smallSteerTorque
+	msg.buf[0] = ~msg.buf[0]; // invert the whole message to make negative positive, positive negative.  OP wants left positive (why??)
+	msg.buf[1] =  ( ~(  EPStoLKASBuffer[0] >>3 ) )   & B00000001; // 1st MSB of bigSteerTorque (4bit) ... added NOT (~) to invert the sign
 
 
 	//add other data from Teensy so OP can record it
-	msg.txMsg.bytes[1] |= LkasFromCanStatus << 4; 
-	msg.txMsg.bytes[1] |= OPLkasActive << 2;
-	msg.txMsg.bytes[1] |= LkasFromCanFatalError << 3;
+	msg.buf[1] |= LkasFromCanStatus << 4; 
+	msg.buf[1] |= OPLkasActive << 2;
+	msg.buf[1] |= LkasFromCanFatalError << 3;
 	
-	msg.txMsg.bytes[2] = (OPCanCounter << 4 ); // put in the counter
-	msg.txMsg.bytes[2] |= honda_compute_checksum(&msg.txMsg.bytes[0],3,(unsigned int) msg.txMsgID);
+	msg.buf[2] = (OPCanCounter << 4 ); // put in the counter
+	msg.buf[2] |= honda_compute_checksum(&msg.buf[0],3,(unsigned int) msg.id);
 	// FCAN.write(msg);
-	can.transmit(msg.txMsgID,msg.txMsg.bytes, msg.txMsgLen);
+	sendCanMsg(&msg);;
 }
 // struct msgFrm
 // {
