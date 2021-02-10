@@ -35,4 +35,15 @@ typedef struct CAN_message_t {
 } CAN_message_t;
 
 
+typedef struct
+{
+  uint32_t id;        /* 29 bit identifier                               */
+  uint8_t  buf[8] = {0};   /* Data field                                      */
+  uint8_t  len;       /* Length of data field in bytes                   */
+  uint8_t  ch;        /* Object channel(Not use)                         */
+  uint8_t  format = 0;    /* 0 - STANDARD, 1- EXTENDED IDENTIFIER            */
+  uint8_t  type = 0;      /* 0 - DATA FRAME, 1 - REMOTE FRAME                */
+} CAN_msg_t;
+
+
 #endif
