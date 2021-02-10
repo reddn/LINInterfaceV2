@@ -1,6 +1,11 @@
 #ifndef BUILDCANMESSAGESH
 #define BUILDCANMESSAGESH
 
+void buildSteerMotorTorqueCanMsg();
+void buildSteerStatusCanMsg();
+void handleLkasFromCanV3();
+uint8_t getNextOpenTxMailbox();
+void sendCanMsg(CAN_msg_t *CAN_tx_msg);
 
 // #include <FlexCAN_T4.h>
 #include <eXoCAN.h>
@@ -10,11 +15,6 @@
 #include "LKAStoEPS.h"
 #include "createLINMessages.h"
 
-void buildSteerMotorTorqueCanMsg();
-void buildSteerStatusCanMsg();
-void handleLkasFromCanV3();
-uint8_t getNextOpenTxMailbox();
-void sendCanMsg(CAN_msg_t *CAN_tx_msg);
 
 
 #define STM32_CAN_TIR_TXRQ              (1U << 0U)  // Bit 0: Transmit Mailbox Request
