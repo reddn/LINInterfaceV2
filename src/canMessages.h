@@ -8,6 +8,14 @@
 #include "globalExtern.h"
 #include "checksums.h"
 #include "LKAStoEPS.h"
+#include "createLINMessages.h"
+
+void buildSteerMotorTorqueCanMsg();
+void buildSteerStatusCanMsg();
+void handleLkasFromCanV3();
+uint8_t getNextOpenTxMailbox();
+void sendCanMsg(CAN_msg_t *CAN_tx_msg);
+
 
 #define STM32_CAN_TIR_TXRQ              (1U << 0U)  // Bit 0: Transmit Mailbox Request
 #define STM32_CAN_RIR_RTR               (1U << 1U)  // Bit 1: Remote Transmission Request
@@ -18,11 +26,7 @@
 #define CAN_EXT_ID_MASK                 0x1FFFFFFFU
 #define CAN_STD_ID_MASK                 0x000007FFU
 
-void buildSteerMotorTorqueCanMsg();
-void buildSteerStatusCanMsg();
-void handleLkasFromCanV3();
-uint8_t getNextOpenTxMailbox();
-void sendCanMsg(CAN_msg_t*);
+
 
 // BO_ 427 STEER_MOTOR_TORQUE: 3 EPS
 //  SG_ MOTOR_TORQUE : 0|10@0+ (1,0) [-256|256] "" EON
@@ -53,6 +57,7 @@ void buildSteerMotorTorqueCanMsg(){ //TODO: add to decclaration
 	// FCAN.write(msg);
 	// can.transmit(msg.id, msg.buf, msg.len);sendCanMsg(&msg);
 	sendCanMsg(&msg);
+
 }
 
 
@@ -119,14 +124,14 @@ void handleLkasFromCanV3(){
 
 	digitalToggle(BLUE_LED);
 
-#ifdef DEBUG_PRINT_OPtoCAN_INPUT
-	outputSerial.print("\nCANmsg rcvd id: ");
-	outputSerial.print(canmsg.txMsgID,DEC);
-	outputSerial.print(":");
-	for(uint8_t bb = 0; bb < canmsg.txMsgLen; bb++){
-		printuint_t(canMsg.txMsg.bytes[bb]);
-	}
-#endif 
+// #ifdef DEBUG_PRINT_OPtoCAN_INPUT
+// 	outputSerial.print("\nCANmsg rcvd id: ");
+// 	outputSerial.print(canmsg.txMsgID,DEC);
+// 	outputSerial.print(":");
+// 	for(uint8_t bb = 0; bb < canmsg.txMsgLen; bb++){
+// 		printuint_t(canMsg.txMsg.bytes[bb]);
+// 	}
+// #endif 
 
 	if((canMsg.txMsg.bytes[2] >> 7) == 1 ){ // if STEER REQUEST (aka LKAS enabled)
 		OPLkasActive = true;
@@ -205,7 +210,7 @@ uint8_t getNextOpenTxMailbox(){
 	if ((CAN1->TSR&CAN_TSR_TME1) == CAN_TSR_TME1_Msk) return 1;
 	if ((CAN1->TSR&CAN_TSR_TME2) == CAN_TSR_TME2_Msk) return 2;
 	return 255;
-}
+} 
 
 void sendCanMsg(CAN_msg_t *CAN_tx_msg){
 // 	if (CAN_tx_msg->format == EXTENDED_FORMAT) { // Extended frame format
@@ -219,23 +224,25 @@ uint32_t out = (CAN_tx_msg->id & CAN_STD_ID_MASK) << 21U;
 //   if (CAN_tx_msg->type == REMOTE_FRAME) {
 //       out |= STM32_CAN_TIR_RTR;
 //   }
-uint8_t mailbox = getNextOpenTxMailbox();
-if(mailbox > 3) return;
-CAN1->sTxMailBox[mailbox].TDTR &= ~(0xF);
-CAN1->sTxMailBox[mailbox].TDTR |= CAN_tx_msg->len & 0xFUL;
 
-CAN1->sTxMailBox[mailbox].TDLR  = 	(((uint32_t) CAN_tx_msg->buf[3] << 24) |
-									((uint32_t) CAN_tx_msg->buf[2] << 16) |
-									((uint32_t) CAN_tx_msg->buf[1] <<  8) |
-									((uint32_t) CAN_tx_msg->buf[0]      ));
-CAN1->sTxMailBox[mailbox].TDHR  = 	(((uint32_t) CAN_tx_msg->buf[7] << 24) |
-									((uint32_t) CAN_tx_msg->buf[6] << 16) |
-									((uint32_t) CAN_tx_msg->buf[5] <<  8) |
-									((uint32_t) CAN_tx_msg->buf[4]      ));
 
-// Send Go
-CAN1->sTxMailBox[mailbox].TIR = out | STM32_CAN_TIR_TXRQ;
-return;
+	uint8_t mailbox = getNextOpenTxMailbox();
+	if(mailbox > 3) return;
+	CAN1->sTxMailBox[mailbox].TDTR &= ~(0xF);
+	CAN1->sTxMailBox[mailbox].TDTR |= CAN_tx_msg->len & 0xFUL;
+
+	CAN1->sTxMailBox[mailbox].TDLR  = 	(((uint32_t) CAN_tx_msg->buf[3] << 24) |
+										((uint32_t) CAN_tx_msg->buf[2] << 16) |
+										((uint32_t) CAN_tx_msg->buf[1] <<  8) |
+										((uint32_t) CAN_tx_msg->buf[0]      ));
+	CAN1->sTxMailBox[mailbox].TDHR  = 	(((uint32_t) CAN_tx_msg->buf[7] << 24) |
+										((uint32_t) CAN_tx_msg->buf[6] << 16) |
+										((uint32_t) CAN_tx_msg->buf[5] <<  8) |
+										((uint32_t) CAN_tx_msg->buf[4]      ));
+
+	// Send Go
+	CAN1->sTxMailBox[mailbox].TIR = out | STM32_CAN_TIR_TXRQ;
+	return;
 }
 
 
