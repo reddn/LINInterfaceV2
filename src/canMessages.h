@@ -188,10 +188,10 @@ void handleLkasFromCanV3(){
 
 	buildSteerStatusCanMsg(); // no need for this.. testing only .. wrong place alsooo
 	buildSteerStatusCanMsg();
-	buildSteerMotorTorqueCanMsg()
+	buildSteerMotorTorqueCanMsg();
 	buildSteerStatusCanMsg(); // no need for this.. testing only .. wrong place alsooo
 	buildSteerStatusCanMsg();
-	buildSteerMotorTorqueCanMsg()
+	buildSteerMotorTorqueCanMsg();
 }
 
 
