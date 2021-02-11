@@ -71,6 +71,7 @@ uint16_t mainLedBlinkTimer = 2000;
 
 unsigned long lastDigitalReadTime = 0;
 
+unsigned long lastRedLedToggle = 0;
 
 uint8_t lastLittleSteer1bit = 0;
 

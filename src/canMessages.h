@@ -1,20 +1,19 @@
 #ifndef BUILDCANMESSAGESH
 #define BUILDCANMESSAGESH
 
+
 void buildSteerMotorTorqueCanMsg();
 void buildSteerStatusCanMsg();
 void handleLkasFromCanV3();
 uint8_t getNextOpenTxMailbox();
 void sendCanMsg(CAN_msg_t *CAN_tx_msg);
 
-// #include <FlexCAN_T4.h>
 #include <eXoCAN.h>
 #include "struct.h"
 #include "globalExtern.h"
 #include "checksums.h"
 #include "LKAStoEPS.h"
 #include "createLINMessages.h"
-
 
 
 #define STM32_CAN_TIR_TXRQ              (1U << 0U)  // Bit 0: Transmit Mailbox Request
@@ -114,6 +113,16 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 
 
 void handleLkasFromCanV3(){
+
+	//TESTING
+	if(canMsg.txMsgID != 228) return;
+	
+	buildSteerStatusCanMsg();
+	buildSteerMotorTorqueCanMsg();
+	createKLinMessageWBigSteerAndLittleSteer(3,3);
+
+
+
 // 	BO_ 228 STEERING_CONTROL: 5 ADAS
 //  SG_ STEER_TORQUE : 7|16@0- (1,0) [-3840|3840] "" EPS
 //  SG_ STEER_TORQUE_REQUEST : 23|1@0+ (1,0) [0|1] "" EPS
@@ -122,7 +131,7 @@ void handleLkasFromCanV3(){
 //  SG_ CHECKSUM : 35|4@0+ (1,0) [0|3] "" EPS
 	// if(canMsg.txMsgID != 228) return;
 
-	digitalToggle(BLUE_LED);
+	// digitalToggle(BLUE_LED);
 
 // #ifdef DEBUG_PRINT_OPtoCAN_INPUT
 // 	outputSerial.print("\nCANmsg rcvd id: ");
@@ -176,7 +185,7 @@ void handleLkasFromCanV3(){
 	// set big/small steer in varible and that LKAS is on
 	// so when its time to send a LKAS message, it just reads the data, make the checksum and send it
 	if(counterVerified && checksumVerified){
-		createKLinMessageWBigSteerAndLittleSteer(lclBigSteer,lclLittleSteer);
+
 		
 		OPBigSteer = lclBigSteer;
 		OPLittleSteer = lclLittleSteer;
@@ -188,7 +197,7 @@ void handleLkasFromCanV3(){
 		OPLkasActive = false;
 		// TODO: send/set/notify something to show there was an error... 
 	}
-	OPSteeringControlMessageStatusPending = true;
+	OPSteeringControlMessageStatusPending = true;  //im not sure this should be there TODO: check if its right
 	OPTimeLastCANRecieved = millis();
 
 }

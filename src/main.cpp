@@ -22,6 +22,8 @@ void handleInputReads(){
 		if( (millis() - OPTimeLastCANRecieved) < 1000 ) mainLedBlinkTimer = 200;
 		else mainLedBlinkTimer = 2000; 
 		
+		if((millis() - lastRedLedToggle ) > mainLedBlinkTimer) digitalToggle(STATUS_LED);
+
 		digitalWrite(BLUE_LED,( EPStoLKASBuffer[2] >> 2 ) & B00000001);
 		
 		if(LkasFromCanChecksumErrorCount > 2){
@@ -30,14 +32,11 @@ void handleInputReads(){
 			LkasFromCanStatus = 2;
 		} else if(!LkasFromCanFatalError) LkasFromCanChecksumErrorCount = 0;
 
-		if(	(millis() - OPTimeLastCANRecieved) > 50 ){
+		if(	(millis() - OPTimeLastCANRecieved) > 50 && OPTimeLastCANRecieved != 0 ){
 			OPSteeringControlMessageStatusPending = false;
 			LkasFromCanFatalError = true;
 			LkasFromCanStatus = 1;
 		}
-		buildSteerMotorTorqueCanMsg();
-		buildSteerStatusCanMsg();
-		createKLinMessageWBigSteerAndLittleSteer(3,3);
 
 		lastDigitalReadTime = millis();
 	} // end if true
