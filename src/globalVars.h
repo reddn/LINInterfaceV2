@@ -6,8 +6,9 @@
 #include <eXoCAN.h>
 #include "struct.h"
 
-HardwareSerial Serial2(PA3,PA2);
-HardwareSerial Serial3(PA10,PA9);
+// HardwareSerial Serial2(PA3,PA2);
+HardwareSerial Serial2(USART2);
+// HardwareSerial Serial3(PA10,PA9);
 
 incomingLKASMessage incomingMsg;
 

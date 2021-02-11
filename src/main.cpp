@@ -51,6 +51,8 @@ void handleInputReads(){
 void setup() {
 	EPStoLKAS_Serial.begin(9600,SERIAL_8E1);
 	LKAStoEPS_Serial.begin(9600,SERIAL_8E1);
+	// Serial.begin(9600);
+	// Serial2.begin(9600);
 	// outputSerial.begin(OUTPUTSERIAL_BAUD);
 	// pinMode(analogRotaryInputPin,INPUT);
 	// pinMode(PB1_spoofLKASLeft, INPUT_PULLUP);
