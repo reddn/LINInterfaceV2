@@ -116,10 +116,7 @@ void handleLkasFromCanV3(){
 
 	//TESTING
 	if(canMsg.txMsgID != 228) return;
-	
-	buildSteerStatusCanMsg();
-	buildSteerMotorTorqueCanMsg();
-	createKLinMessageWBigSteerAndLittleSteer(3,3);
+
 
 
 
