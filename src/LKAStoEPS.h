@@ -43,6 +43,7 @@ void handleLKAStoEPS(){
 		OPSteeringControlMessageActive = true;
 		// if(LkasFromCanFatalError) OPLkasActive = false;
 		if(OPSteeringControlMessageActive ){
+			digitalToggle(STATUS_LED);
 			if(OPLkasActive) createKLinMessageWBigSteerAndLittleSteer(OPBigSteer,OPLittleSteer);
             else sendArrayToLKAStoEPSSerial(&lkas_off_array[incomingMsg.counterBit][0]);
 		} else {

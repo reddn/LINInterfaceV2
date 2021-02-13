@@ -9,9 +9,11 @@
 // LKAS TO EPS TX1 >> UART3 TX
 
 
-#define LKAStoEPS_Serial Serial2
+#define LKAStoEPS_Serial UART3  // was serial2
 
-#define EPStoLKAS_Serial Serial
+#define EPStoLKAS_Serial UART2  // was serial
+
+
 // #define outputSerial Serial
 #define PB1_spoofLKASLeft 2 
 #define PB2_spoofLKASRight 3
