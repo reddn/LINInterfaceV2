@@ -15,9 +15,9 @@ void handleEPStoLKAS(){
 	{
 		uint8_t rcvdByte = EPStoLKAS_Serial.read();	
 
-		uint8_t offset7 = rcvdByte >> 7;
+		uint8_t offset4 = rcvdByte >> 4;
         
-        if(offset7 == 0 ){ //first frame
+        if(offset4 < 4 ){ //first frame
             EPStoLKASBufferCounter = 0;
         }  
         EPStoLKASBuffer[EPStoLKASBufferCounter] = rcvdByte;
@@ -59,8 +59,8 @@ void handleEPStoLKAS(){
 
 		// 	}
 		// }
-
-	if(EPStoLKASBufferCounter < 4) return; 
+    EPStoLKASBufferCounter++;
+	if(EPStoLKASBufferCounter < 5) return;  //only reason for using 5 is im using the incrmeent, so its really still on 3, but is incremented to 4 early, so it really needs to be 5 
 
 	//TODO: run checksum on data
     // This function builds the 2 CAN messages for MOTOR_TORQUE and STEER_TORQUE (input) from the EPStoLKAS 5 byte frame
@@ -79,6 +79,7 @@ void handleEPStoLKAS(){
  
 	if(++OPCanCounter > 3) OPCanCounter = 0;
     }
+    EPStoLKASBufferCounter = 0; //reset EPStoLKASBufferCounter to zero
 } // end handleEPStoLKAS()
 
 
