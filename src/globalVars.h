@@ -8,9 +8,12 @@
 
 //(rx, tx)   USART2  tx=PA2  rx= pA3   
 //USART1 tx= PA9  rx=PA10
-HardwareSerial UART2(PA3,PA2);           
+
+//PCB: UART3_TX is PA9    (im guessing rx is PA10)  ITs called 'Serial' in the framework
+
+HardwareSerial EPStoLKAS_Serial(PA3,PA2);           
 // HardwareSerial Serial2(USART2);
-HardwareSerial UART3(PA10,PA9);
+HardwareSerial LKAStoEPS_Serial(PA10,PA9);
 
 
 incomingLKASMessage incomingMsg;
