@@ -11,8 +11,7 @@
 
 //PCB: UART3_TX is PA9    (im guessing rx is PA10)  ITs called 'Serial' in the framework
 
-HardwareSerial EPStoLKAS_Serial(PA3,PA2);           
-// HardwareSerial Serial2(USART2);
+HardwareSerial EPStoLKAS_Serial(PA3,PA2); // rx, tx          
 HardwareSerial LKAStoEPS_Serial(PA10,PA9);
 
 
