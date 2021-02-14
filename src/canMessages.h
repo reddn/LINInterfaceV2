@@ -128,7 +128,6 @@ void handleLkasFromCanV3(){
 //  SG_ CHECKSUM : 35|4@0+ (1,0) [0|3] "" EPS
 	// if(canMsg.txMsgID != 228) return;
 
-	// digitalToggle(BLUE_LED);
 
 // #ifdef DEBUG_PRINT_OPtoCAN_INPUT
 // 	outputSerial.print("\nCANmsg rcvd id: ");

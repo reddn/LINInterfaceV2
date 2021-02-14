@@ -23,9 +23,9 @@ void handleInputReads(){
 		
 		if( (millis() - lastRedLedToggle ) > mainLedBlinkTimer) digitalToggle(STATUS_LED);
 
-		// digitalWrite(BLUE_LED,( EPStoLKASBuffer[2] >> 2 ) & B00000001);
+												// digitalWrite(BLUE_LED,( EPStoLKASBuffer[2] >> 2 ) & B00000001);
 		digitalWrite(STATUS_LED,( EPStoLKASBuffer[2] >> 2 ) & B00000001);
-		// digitalWrite(BLUE_LED,OPLkasActive);
+												// digitalWrite(BLUE_LED,OPLkasActive);
 		
 		if(LkasFromCanChecksumErrorCount > 2){
 			OPSteeringControlMessageStatusPending = false;
