@@ -38,7 +38,7 @@ void handleLKAStoEPS(){
     // }
 
 	//new version
-	if(incomingMsg.counterBit == 0){
+	if(incomingMsg.totalCounter == 0){   
 		OPSteeringControlMessageActive = OPSteeringControlMessageStatusPending;
 		OPSteeringControlMessageActive = true;
 		// if(LkasFromCanFatalError) OPLkasActive = false;
