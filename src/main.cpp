@@ -21,7 +21,7 @@ void handleInputReads(){
 
 
 		
-		if( (millis() - lastRedLedToggle ) > mainLedBlinkTimer) digitalToggle(STATUS_LED);
+		// if( (millis() - lastRedLedToggle ) > mainLedBlinkTimer) digitalToggle(STATUS_LED);
 
 												// digitalWrite(BLUE_LED,( EPStoLKASBuffer[2] >> 2 ) & B00000001);
 		digitalWrite(STATUS_LED,( EPStoLKASBuffer[2] >> 2 ) & B00000001);
