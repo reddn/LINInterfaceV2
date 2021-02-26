@@ -5,9 +5,27 @@
 #include "canMessages.h"
 #include "sendSerial.h"
 
+uint8_t EPStoLKAStempBuffer[5];
+uint8_t EPStoLKAStempBufferCounter = 0;
+void handleEPStoLKAStempBuffer(uint8_t rcvdByte);
 void handleEPStoLKASKeepMcuHappy(uint8_t rcvdByte);
 
-
+void handleEPStoLKAStempBuffer(uint8_t rcvdByte){
+    EPStoLKAStempBuffer[EPStoLKAStempBufferCounter] = rcvdByte;
+    EPStoLKAStempBufferCounter++;
+    if(EPStoLKAStempBufferCounter > 4){
+        CAN_msg_t msg;
+        msg.id = 521;
+        msg.len = 5U;
+        msg.buf[0] = EPStoLKAStempBuffer[0];
+        msg.buf[1] = EPStoLKAStempBuffer[1];
+        msg.buf[2] = EPStoLKAStempBuffer[2];
+        msg.buf[3] = EPStoLKAStempBuffer[3];
+        msg.buf[4] = EPStoLKAStempBuffer[4];
+        sendCanMsg(&msg);
+        EPStoLKAStempBufferCounter = 0;
+    }
+}
 
 void handleEPStoLKAS(){
 
@@ -16,7 +34,8 @@ void handleEPStoLKAS(){
 		uint8_t rcvdByte = EPStoLKAS_Serial.read();	
 
 		uint8_t offset4 = rcvdByte >> 4;
-        
+        handleEPStoLKAStempBuffer(rcvdByte);
+
         if(offset4 < 4 ){ //first frame
             EPStoLKASBufferCounter = 0;
         }  
