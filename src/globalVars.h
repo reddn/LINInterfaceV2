@@ -46,10 +46,10 @@ uint8_t nextCounterBit = 0;
 int8_t LkasOnIntroCountDown = 5; // sends 5 frames of LKAS on and 0 apply steer.. the stock LKAS does this. but I dont think its needed
 
 // FlexCAN_T4<CAN1, RX_SIZE_512, TX_SIZE_128> FCAN;
-eXoCAN can(STD_ID_LEN, BR500K, PORTB_8_9_XCVR); 
+// eXoCAN can(STD_ID_LEN, BR500K, PORTB_8_9_XCVR); 
 
 
-msgFrm canMsg;
+// msgFrm canMsg;
 
 
 bool OPLkasActive = false;

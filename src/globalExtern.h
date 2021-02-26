@@ -37,7 +37,7 @@ extern int8_t LkasOnIntroCountDown; // sends 5 frames of LKAS on and 0 apply ste
 // extern eXoCAN can(STD_ID_LEN, BR250K, PORTA_11_12_WIRE_PULLUP); 
 
 
-extern msgFrm canMsg;
+// extern msgFrm canMsg;
 
 extern bool OPLkasActive ;
 extern uint8_t OPBigSteer ;
