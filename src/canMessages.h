@@ -8,7 +8,7 @@ void handleLkasFromCanV3();
 uint8_t getNextOpenTxMailbox();
 void sendCanMsg(CAN_msg_t *CAN_tx_msg);
 
-#include <eXoCAN.h>
+// #include <eXoCAN.h> //NO CAN
 #include "struct.h"
 #include "globalExtern.h"
 #include "checksums.h"
@@ -218,6 +218,7 @@ uint8_t getNextOpenTxMailbox(){
 } 
 
 void sendCanMsg(CAN_msg_t *CAN_tx_msg){
+																								return; // NO CAN
 // 	if (CAN_tx_msg->format == EXTENDED_FORMAT) { // Extended frame format
 //       out = ((CAN_tx_msg->id & CAN_EXT_ID_MASK) << 3U) | STM32_CAN_TIR_IDE;
 //   }

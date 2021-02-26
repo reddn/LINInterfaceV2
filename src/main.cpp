@@ -2,7 +2,7 @@
 #include <Arduino.h>
 // #include <FlexCAN_T4.h>
 #include "globalVars.h"
-#include <eXoCAN.h>
+// #include <eXoCAN.h> // NO CAN
 #include  "canMessages.h"
 #include "checksums.h"
 #include "EPStoLKAS.h"
@@ -73,9 +73,10 @@ void setup() {
 	// canSetup();
 	// FCAN.begin();
 	// FCAN.setBaudRate(500000);
-	can.begin(STD_ID_LEN, BR500K, PORTB_8_9_XCVR);
-    can.filterList16Init(0,0xe4,0,0,0);
-	canMsg.busConfig = PORTB_8_9_XCVR;
+
+	// can.begin(STD_ID_LEN, BR500K, PORTB_8_9_XCVR); // NO CAN
+    // can.filterList16Init(0,0xe4,0,0,0);
+	// canMsg.busConfig = PORTB_8_9_XCVR;
 
 }
 int zeroVal = 0;
@@ -86,7 +87,7 @@ void loop() {
   handleEPStoLKAS();
   handleInputReads();
 
-  if(can.receive(canMsg.txMsgID,zeroVal,canMsg.txMsg.bytes) > -1){
-	handleLkasFromCanV3();
-  }
+//   if(can.receive(canMsg.txMsgID,zeroVal,canMsg.txMsg.bytes) > -1){  //NO CAN
+// 	handleLkasFromCanV3();
+//   }
 }

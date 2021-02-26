@@ -4,7 +4,7 @@
 
 #include <Arduino.h>
 // #include <FlexCAN_T4.h>
-#include <eXoCAN.h>
+// #include <eXoCAN.h> //NO CAN
 #include "struct.h"
 
 
