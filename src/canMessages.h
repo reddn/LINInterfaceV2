@@ -4,6 +4,7 @@
 
 void buildSteerMotorTorqueCanMsg();
 void buildSteerStatusCanMsg();
+void buildSendAllLinDataCanMsg();
 void handleLkasFromCanV3();
 uint8_t getNextOpenTxMailbox();
 void sendCanMsg(CAN_msg_t *CAN_tx_msg);
@@ -44,17 +45,16 @@ void buildSteerMotorTorqueCanMsg(){ //TODO: add to decclaration
 	CAN_msg_t msg;
 	msg.id = 427;
 	msg.len = 3;
-	msg.buf[0] = (EPStoLKASBuffer[2] << 4 ) & B1000000;  //1 LSB bit of bigSteerTorque 
-	msg.buf[0] |= EPStoLKASBuffer[3] & B01111111 ; // all of SmallSteerTorque
-	msg.buf[1] = ( EPStoLKASBuffer[2] >> 4 ) & B00000011; // 2 MSB of bigSteerTorque
+	msg.buf[0] = (EPStoLKASBuffer[2] << 2 ) & B11100000;  //1 LSB bit of bigSteerTorque /// redone> this is the big torque steer 
+	msg.buf[0] |= (EPStoLKASBuffer[3] >> 2) & B00011111 ; // all of SmallSteerTorque   ///redone this is the 5MSB of little torque steer
+	msg.buf[1] = ( EPStoLKASBuffer[2] >> 4 ) & B00000011; // 2 MSB of bigSteerTorque 	//redone this is the 2LSB of little torque steer on the MSB of the next byte
 	msg.buf[1] |= ( EPStoLKASBuffer[1] << 2 ) & B10000000;  // this is output_disabled_inverted
 	msg.buf[1] |= ( EPStoLKASBuffer[2] << 2 )& B00011100; //UNK_3bit_1
 	msg.buf[1] |=  EPStoLKASBuffer[2] & B01000000; //output_disabled
 	
 	msg.buf[2] = (OPCanCounter << 4 ); // put in the counter
 	msg.buf[2] |= honda_compute_checksum(&msg.buf[0],3,(unsigned int)msg.id);
-	// FCAN.write(msg);
-	// can.transmit(msg.id, msg.buf, msg.len);sendCanMsg(&msg);
+	
 	sendCanMsg(&msg);
 
 }
@@ -109,7 +109,23 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 //   int txDly = 5000;
 // };
 
+void buildSendAllLinDataCanMsg(){
+	CAN_msg_t msg;
+	msg.id = 521;
+	msg.len = 8U;
+	msg.buf[0] =  incomingMsg.data[0];
+	msg.buf[1] =  incomingMsg.data[1];
+	msg.buf[2] =  incomingMsg.data[2];
+	msg.buf[3] =  EPStoLKASBuffer[0];
+	msg.buf[4] =  EPStoLKASBuffer[1];
+	msg.buf[5] =  EPStoLKASBuffer[2];
+	msg.buf[6] =  EPStoLKASBuffer[3]; 
 
+	msg.buf[7] = (OPCanCounter << 4 ); // put in the counter
+	msg.buf[7] |= honda_compute_checksum(&msg.buf[0],msg.len,(unsigned int) msg.id);
+	// FCAN.write(msg);
+	sendCanMsg(&msg);
+}
 
 
 void handleLkasFromCanV3(){

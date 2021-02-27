@@ -9,8 +9,6 @@
 void createKLinMessageWBigSteerAndLittleSteer(uint8_t bigSteer, uint8_t littleSteer);
 void createKLinMessage(int16_t applySteer);
 
-uint8_t blueLedCounter = 0;
-
 
 //This function takes the signed int to make it into a valid LKAStoEPS message for steering.  
 //Since everyting is triggered by the stock LKAS(MCU), the counter bits are synced on those messages.
@@ -98,10 +96,7 @@ void createKLinMessageWBigSteerAndLittleSteer(uint8_t bigSteer, uint8_t littleSt
 	// FCAN.write(thisCanMsg);
 	// can.transmit(thisCanMsg.id,thisCanMsg.buf, thisCanMsg.len);
 	sendCanMsg(&thisCanMsg);
-	if(blueLedCounter++ > 100){
-		blueLedCounter = 0;
-		digitalToggle(BLUE_LED);
-	}
+
 }
 
 

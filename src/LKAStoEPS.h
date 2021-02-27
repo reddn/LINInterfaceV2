@@ -40,13 +40,12 @@ void handleLKAStoEPS(){
 	//new version
 	if(incomingMsg.totalCounter == 0){   
 		OPSteeringControlMessageActive = OPSteeringControlMessageStatusPending;
-		OPSteeringControlMessageActive = true;
+		OPSteeringControlMessageActive = true; /// this was to test if there was other issues.
 		// if(LkasFromCanFatalError) OPLkasActive = false;
 		if(OPSteeringControlMessageActive ){
-			// digitalToggle(STATUS_LED);
 			if(OPLkasActive) createKLinMessageWBigSteerAndLittleSteer(OPBigSteer,OPLittleSteer);
             else sendArrayToLKAStoEPSSerial(&lkas_off_array[incomingMsg.counterBit][0]);
-		} else {
+		} else { // if OPSteeringControlMessageActive is false
 			sendArrayToLKAStoEPSSerial(&lkas_off_array[incomingMsg.counterBit][0]);
 		}
 	}else { // not the first byte in the frame
