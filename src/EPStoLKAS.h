@@ -27,7 +27,7 @@ void handleEPStoLKAS(){
         if(OPSteeringControlMessageActive){
             switch(EPStoLKASBufferCounter){
                 case 0:
-                    rcvdByte &= B01000000;
+                    rcvdByte &= B00100000;
                     rcvdByte |= steerTorqueModifiedBigValue;
                     break;
                 case 1:
