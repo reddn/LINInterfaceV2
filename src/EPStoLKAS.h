@@ -11,6 +11,8 @@ void handleEPStoLKAStempBuffer(uint8_t rcvdByte);
 void handleEPStoLKASKeepMcuHappy(uint8_t rcvdByte);
 
 void handleEPStoLKAStempBuffer(uint8_t rcvdByte){
+    rcvdByte &= B11111000;
+    rcvdByte |= (EPStoLKASBufferCounter & B00000111);
     EPStoLKAStempBuffer[EPStoLKAStempBufferCounter] = rcvdByte;
     EPStoLKAStempBufferCounter++;
     if(EPStoLKAStempBufferCounter > 4){
