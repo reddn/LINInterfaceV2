@@ -99,8 +99,8 @@ void handleEPStoLKAS(){
     steerTorqueModifiedLittleValue = (uint8_t) steerTorqueModified & B0001111;
  
 	if(++OPCanCounter > 3) OPCanCounter = 0;
-    }
     EPStoLKASBufferCounter = 0; //reset EPStoLKASBufferCounter to zero
+    }
 } // end handleEPStoLKAS()
 
 
