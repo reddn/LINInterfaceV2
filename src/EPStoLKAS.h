@@ -48,38 +48,27 @@ void handleEPStoLKAS(){
         } 
         EPStoLKAS_Serial.write(rcvdByte);
 
-        //   if its the 5th byte (index 4).. check checksum,, if its bad.. return
-        
-		// if(EPStoLKASBufferCounter == 4)
-		// {
-		// 	uint8_t thisChksm = chksm(&EPStoLKASBuffer[0],4);
-		// 	if(thisChksm != rcvdByte){ //bad checksum of the LIN received frame
+        EPStoLKASBufferCounter++;
+        if(EPStoLKASBufferCounter < 5) return;  //only reason for using 5 is im using the incrmeent, so its really still on 3, but is incremented to 4 early, so it really needs to be 5 
 
-
-
-		// 	}
-		// }
-    EPStoLKASBufferCounter++;
-	if(EPStoLKASBufferCounter < 5) return;  //only reason for using 5 is im using the incrmeent, so its really still on 3, but is incremented to 4 early, so it really needs to be 5 
-
-	//TODO: run checksum on data
-    // This function builds the 2 CAN messages for MOTOR_TORQUE and STEER_TORQUE (input) from the EPStoLKAS 5 byte frame
-    // but only does it after the whole frame is received and checksum'd
-	buildSteerMotorTorqueCanMsg();
-	buildSteerStatusCanMsg();
-    steerTorque =  (EPStoLKASBuffer[0] << 5 )  & B11100000;
-    steerTorque |= EPStoLKASBuffer[1] & B00011111;
-    if ( (EPStoLKASBuffer[0] >> 3) == 1 ) { //its negative
-        steerTorque |= 0xFF00;
-    } 
-    steerTorqueModified = steerTorque + OPApply_steer / 3;
-    steerTorqueModifiedBigValue = (uint8_t) ( steerTorqueModified >> 12 ) & B00001000;
-    steerTorqueModifiedBigValue |= (uint8_t) ( steerTorqueModified >> 5 ) & B11100000;
-    steerTorqueModifiedLittleValue = (uint8_t) steerTorqueModified & B0001111;
- 
-	if(++OPCanCounter > 3) OPCanCounter = 0;
-    }
-    EPStoLKASBufferCounter = 0; //reset EPStoLKASBufferCounter to zero
+        //TODO: run checksum on data
+        // This function builds the 2 CAN messages for MOTOR_TORQUE and STEER_TORQUE (input) from the EPStoLKAS 5 byte frame
+        // but only does it after the whole frame is received and checksum'd
+        buildSteerMotorTorqueCanMsg();
+        buildSteerStatusCanMsg();
+        steerTorque =  (EPStoLKASBuffer[0] << 5 )  & B11100000;
+        steerTorque |= EPStoLKASBuffer[1] & B00011111;
+        if ( (EPStoLKASBuffer[0] >> 3) == 1 ) { //its negative
+            steerTorque |= 0xFF00;
+        } 
+        steerTorqueModified = steerTorque + OPApply_steer / 3;
+        steerTorqueModifiedBigValue = (uint8_t) ( steerTorqueModified >> 12 ) & B00001000;
+        steerTorqueModifiedBigValue |= (uint8_t) ( steerTorqueModified >> 5 ) & B11100000;
+        steerTorqueModifiedLittleValue = (uint8_t) steerTorqueModified & B0001111;
+    
+        if(++OPCanCounter > 3) OPCanCounter = 0;
+        EPStoLKASBufferCounter = 0; //reset EPStoLKASBufferCounter to zero
+    } // end if EPStoLKAS_Serial.available()
 } // end handleEPStoLKAS()
 
 
