@@ -26,6 +26,7 @@ void handleInputReads(){
 			OPSteeringControlMessageStatusPending = false;
 			LkasFromCanFatalError = true;
 			LkasFromCanStatus = 2;
+			LkasFromCanChecksumError = 1;
 		} else if(!LkasFromCanFatalError) LkasFromCanChecksumErrorCount = 0;
 
 		if(OPTimeLastCANRecieved != 0){

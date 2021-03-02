@@ -75,4 +75,6 @@ extern int16_t steerTorque;
 
 extern uint8_t OPSteeringControlMessageStatusPending;
 
+extern uint8_t LkasFromCanChecksumError;
+
 #endif

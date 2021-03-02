@@ -5,9 +5,13 @@
 void buildSteerMotorTorqueCanMsg();
 void buildSteerStatusCanMsg();
 void buildSendAllLinDataCanMsg();
+void buildSendEps2LkasValuesWhole();
+
 void handleLkasFromCanV3();
 uint8_t getNextOpenTxMailbox();
 void sendCanMsg(CAN_msg_t *CAN_tx_msg);
+
+CAN_msg_t msg;
 
 #include <eXoCAN.h>
 #include "struct.h"
@@ -42,7 +46,7 @@ void sendCanMsg(CAN_msg_t *CAN_tx_msg);
 void buildSteerMotorTorqueCanMsg(){ //TODO: add to decclaration
 	//outputSerial.print("\nSendingSteer TOrque Can MSg");
 	// msgFrm msg; // move this to a global to save the assignment of id and len
-	CAN_msg_t msg;
+	// CAN_msg_t msg;
 	msg.id = 427;
 	msg.len = 3;
 	msg.buf[0] = (EPStoLKASBuffer[2] << 2 ) & B11100000;  //1 LSB bit of bigSteerTorque /// redone> this is the big torque steer 
@@ -80,7 +84,7 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 	
 	// outputSerial.print("\nsending Steer Status Cna MSg");
 	// CAN_message_t msg; // move this to a global so you dont have to re assign the id and len
-	CAN_msg_t msg;
+	// CAN_msg_t msg;
 	msg.id = 399;
 	msg.len = 3U;
 	msg.buf[0] = EPStoLKASBuffer[0] << 5;   // 3 LSB of BigSteerTorque (4bit)
@@ -110,7 +114,7 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 // };
 
 void buildSendAllLinDataCanMsg(){
-	CAN_msg_t msg;
+	// CAN_msg_t msg;
 	msg.id = 521;
 	msg.len = 8U;
 	msg.buf[0] =  incomingMsg.data[0];
@@ -125,6 +129,31 @@ void buildSendAllLinDataCanMsg(){
 	msg.buf[7] |= honda_compute_checksum(&msg.buf[0],msg.len,(unsigned int) msg.id);
 	// FCAN.write(msg);
 	sendCanMsg(&msg);
+}
+
+
+void buildSendEps2LkasValuesWhole(){
+	// CAN_msg_t msg;
+	msg.id = 522;
+	msg.len = 8U;
+	msg.buf[0] = incomingMsg.data[1] & B00011111;
+	uint8_t bigSteer = incomingMsg.data[0] & B00001111;
+	msg.buf[0] |= bigSteer << 5;
+	msg.buf[1]  = bigSteer >> 3;   // this byte is only used at the LSB  B00000001
+	msg.buf[1] |= (EPStoLKASBuffer[1] << 1) & B00111110; //little torque steer
+	msg.buf[1] |= (EPStoLKASBuffer[0] << 6) & B11000000; // 2 LSB of the Big torque steer (4 bits)
+	msg.buf[2]  = (EPStoLKASBuffer[0] >> 2) & B00000011;
+
+	msg.buf[1] |=  EPStoLKASBuffer[3] << 1; //little motor torque @ B11111110
+	msg.buf[2] =  (EPStoLKASBuffer[2] >> 3 ) & B00000111; //big motor torque at @ B00000111
+	msg.buf[5] =  EPStoLKASBuffer[2];
+	msg.buf[6] =  EPStoLKASBuffer[3]; 
+
+	msg.buf[7] = (OPCanCounter << 4 ); // put in the counter
+	msg.buf[7] |= honda_compute_checksum(&msg.buf[0],msg.len,(unsigned int) msg.id);
+	// FCAN.write(msg);
+	sendCanMsg(&msg);
+
 }
 
 
