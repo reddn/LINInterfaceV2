@@ -59,9 +59,10 @@ void handleEPStoLKAS(){
         buildSteerMotorTorqueCanMsg();
         buildSteerStatusCanMsg();
         buildSendAllLinDataCanMsg();
+        buildSendEps2LkasValuesWhole();
         steerTorque =  (EPStoLKASBuffer[0] << 5 )  & B11100000;
         steerTorque |= EPStoLKASBuffer[1] & B00011111;
-        if ( (EPStoLKASBuffer[0] >> 3) == 1 ) { //its negative
+        if ( (EPStoLKASBuffer[0] >> 3) == 1 ) { //its negative  // this isn't right... needs to &  B00000001
             steerTorque |= 0xFF00;
         } 
         steerTorqueModified = steerTorque + OPApply_steer / 3;
