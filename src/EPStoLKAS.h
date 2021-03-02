@@ -46,7 +46,8 @@ void handleEPStoLKAS(){
             EPStoLKASBufferModified[EPStoLKASBufferCounter] = rcvdByte;
 
         } 
-        EPStoLKAS_Serial.write(rcvdByte);
+        EPStoLKAS_Serial.write(EPStoLKASBuffer[EPStoLKASBufferCounter]); // added to figure out the FCW error
+        // EPStoLKAS_Serial.write(rcvdByte); // commenting out to figure out the FCW error
 
         EPStoLKASBufferCounter++;
         if(EPStoLKASBufferCounter < 5) return;  //only reason for using 5 is im using the incrmeent, so its really still on 3, but is incremented to 4 early, so it really needs to be 5 
