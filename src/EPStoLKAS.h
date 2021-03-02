@@ -54,10 +54,10 @@ void handleEPStoLKAS(){
         //TODO: run checksum on data
         // This function builds the 2 CAN messages for MOTOR_TORQUE and STEER_TORQUE (input) from the EPStoLKAS 5 byte frame
         // but only does it after the whole frame is received and checksum'd
-        
+
         buildSteerMotorTorqueCanMsg();
         buildSteerStatusCanMsg();
-        // buildSendAllLinDataCanMsg();
+        buildSendAllLinDataCanMsg();
         steerTorque =  (EPStoLKASBuffer[0] << 5 )  & B11100000;
         steerTorque |= EPStoLKASBuffer[1] & B00011111;
         if ( (EPStoLKASBuffer[0] >> 3) == 1 ) { //its negative
