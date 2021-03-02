@@ -88,4 +88,6 @@ int16_t steerTorque = 0;
 
 uint8_t OPSteeringControlMessageStatusPending = false;
 
+uint8_t LkasFromCanChecksumError = 0;
+
 #endif
