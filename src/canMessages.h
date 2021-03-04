@@ -56,17 +56,16 @@ void buildSteerMotorTorqueCanMsg(){ //TODO: add to decclaration
 	msg.buf[1] |= ( incomingMsg.data[0] >> 2 ) & B00000100; //LKAS B0 O4  into CAN B1 O2
 	msg.buf[1] |= ( EPStoLKASBuffer[0]  >> 1 ) & B00001000; //EPS  B0 O4  into CAN B1 O3
 	msg.buf[1] |= ( EPStoLKASBuffer[0]  >> 2 ) & B00010000; //EPS  B0 O6  into CAN B1 O4
-	msg.buf[1] |= ( EPStoLKASBuffer[1]  >> 1 ) & B00100000; //EPS  B1 O6  into CAN B1 O5
-	msg.buf[1] |= ( EPStoLKASBuffer[2]  << 6 ) & B11000000; //EPS  B2 O0  into CAN B1 O6
-															//EPS  B2 O1  into CAN B1 O7
+	msg.buf[1] |= ( EPStoLKASBuffer[1]  >> 1 ) & B00100000; //EPS  B1 O6  into CAN B1 O5  
+	msg.buf[1] |= ( EPStoLKASBuffer[2]  << 6 ) & B11000000; //EPS  B2 O0  into CAN B1 O6  
+															//EPS  B2 O1  into CAN B1 O7  //
 
 	// msg.buf[1] |= ( EPStoLKASBuffer[2] << 2 ) & B10000000;  // this is output_disabled_inverted
 	// msg.buf[1] |= ( EPStoLKASBuffer[2] << 2 )& B00011100; //UNK_3bit_1
 	// msg.buf[1] |=   EPStoLKASBuffer[2] & B01000000; //output_disabled
 	
-
 	msg.buf[2] =  (OPCanCounter << 4 ); // put in the counter
-	msg.buf[2] |= ( EPStoLKASBuffer[2] << 4 ) & B0100000; //EPS  B2 O2  into CAN B2 O6 
+	msg.buf[2] |= ( EPStoLKASBuffer[2] << 4 ) & B0100000; //EPS  B2 O2  into CAN B2 O6 // poss output_disabled?
 	msg.buf[2] |= ( EPStoLKASBuffer[2] << 1 ) & B1000000; //EPS  B2 O6  into CAN B2 O7 
 
 	msg.buf[2] |= honda_compute_checksum(&msg.buf[0],3,(unsigned int)msg.id);
@@ -98,7 +97,7 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 	// CAN_message_t msg; // move this to a global so you dont have to re assign the id and len
 	// CAN_msg_t msg;
 	msg.id = 399;
-	msg.len = 3U;
+	msg.len = 4U;
 	msg.buf[0] = EPStoLKASBuffer[0] << 5;   // 3 LSB of BigSteerTorque (4bit)
 	msg.buf[0] |= EPStoLKASBuffer[1] & B00011111; // all of smallSteerTorque
 	msg.buf[0] = ~msg.buf[0]; // invert the whole message to make negative positive, positive negative.  OP wants left positive (why??)
@@ -106,12 +105,23 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 
 
 	//add other data from Teensy so OP can record it
-	msg.buf[1] |= LkasFromCanStatus << 4; 
-	msg.buf[1] |= OPLkasActive << 2;
-	msg.buf[1] |= LkasFromCanFatalError << 3;
 	
-	msg.buf[2] = (OPCanCounter << 4 ); // put in the counter
-	msg.buf[2] |= honda_compute_checksum(&msg.buf[0],3,(unsigned int) msg.id);
+	msg.buf[1] |= OPLkasActive << 1;  				// CAN B1 O1
+	msg.buf[1] |= LkasFromCanFatalError << 2; 		// CAN B1 O2
+	msg.buf[1] |= canSteerChecksumError << 3; 		// CAN B1 O3
+	msg.buf[1] |= canSteerChecksumFatalError << 4; 	// CAN B1 O4
+	msg.buf[1] |= EPStoLKASChecksumError << 5;  	// CAN B1 O5
+	msg.buf[1] |= EPStoLKASChecksumFatalError << 6;	// CAN B1 O6
+	msg.buf[1] |= OPSteeringControlMsgActive << 7;	// CAN B1 O7
+	
+	msg.buf[2]  = canSteerCounterError;				// CAN B2 O0
+	msg.buf[2] |= canSteerCounterFatalError << 1;	// CAN B2 O1 
+	msg.buf[2] |= LKAStoEPSForwarding << 5; 		// CAN B2 O5
+	msg.buf[2] |= OPSteeringMsgLate << 6; 			// CAN B2 O6
+	msg.buf[2] |= OPSteeringMsgFatalLate << 7;		// CAN B2 O7
+
+	msg.buf[3]  = (OPCanCounter << 4 );				// put in the counter
+	msg.buf[3] |= honda_compute_checksum(&msg.buf[0],3,(unsigned int) msg.id);
 	// FCAN.write(msg);
 	sendCanMsg(&msg);
 }
@@ -178,11 +188,7 @@ void handleLkasFromCanV3(){
 //  SG_ COUNTER : 37|2@0+ (1,0) [0|3] "" EPS
 //  SG_ CHECKSUM : 35|4@0+ (1,0) [0|3] "" EPS
 
-	if((canMsg.txMsg.bytes[2] >> 7) == 1 ){ // if STEER REQUEST (aka LKAS enabled)
-		OPLkasActive = true;
-	} else {
-		OPLkasActive = false;
-	}
+	
 
 	uint8_t lclBigSteer = 0;
 	uint8_t lclLittleSteer = 0;
@@ -194,47 +200,65 @@ void handleLkasFromCanV3(){
 	
 		// TODO: verify counter is working
 	uint8_t lclCounter = canMsg.txMsg.bytes[4] >> 4;
-	bool counterVerified = false;  // need global counter   and counter error
+	bool counterVerified = true;  // need global counter   and counter error
 
-	if(LkasFromCanCounter != lclCounter) LkasFromCanCounterErrorCount++;
-	else LkasFromCanCounterErrorCount = 0;
+	if(LkasFromCanCounter != lclCounter){
+		LkasFromCanCounterErrorCount++;
+		canSteerCounterError = 1;
+		counterVerified = false;
+		if(LkasFromCanCounterErrorCount > 2) {
+			canSteerCounterFatalError = 1;
+			LkasFromCanFatalError = 1;
+		}
+	} else {
+		canSteerCounterError = 0;
+	}
+	LkasFromCanCounter = (lclCounter + 1U) & B00000011;  //if  lclCounter is 3,  adding 1 is 4 B00000100, which is zero if & B00000100
 	
-	if(LkasFromCanCounter < 3) counterVerified = true;
-
-
-	// TODO: verify checksum
 	bool checksumVerified = false;
 
-	if(honda_compute_checksum((uint8_t*) &canMsg.txMsg.bytes[0],5, 228U) == (canMsg.txMsg.bytes[5] & B00001111 )) LkasFromCanChecksumErrorCount = 0;
-	else LkasFromCanChecksumErrorCount++;
+	if(honda_compute_checksum((uint8_t*) &canMsg.txMsg.bytes[0],5, 228U) == (canMsg.txMsg.bytes[5] & B00001111 )) {
+		checksumVerified = true;
+	}
+	else {
+		LkasFromCanChecksumErrorCount++;
+		canSteerChecksumError = 1;
+	}
 	
-	if(LkasFromCanCounterErrorCount < 3 ) checksumVerified = true;
-	else checksumVerified = false;
-
 
 	// TODO: Fix this, hard coded to true for testing
-	counterVerified = true;
-	checksumVerified = true;
+	// counterVerified = true;
+	// checksumVerified = true;
 
 	//canbus data time is checked in the handleLkastoEPS function, if no data has been received within 50ms . LKAS is not allowed to be active
 
 	// set big/small steer in varible and that LKAS is on
 	// so when its time to send a LKAS message, it just reads the data, make the checksum and send it
 	if(counterVerified && checksumVerified){
-
+		if((canMsg.txMsg.bytes[2] >> 7) == 1 ){ // if STEER REQUEST (aka LKAS enabled)
+			OPLkasActive = true;
+		} else {
+			OPLkasActive = false;
+		}
 		
 		OPBigSteer = lclBigSteer;
 		OPLittleSteer = lclLittleSteer;
 		OPApply_steer = (lclBigSteer & B00000111) << 5;
 		OPApply_steer |= lclLittleSteer;
 		if((lclBigSteer >> 3) == 1) OPApply_steer |= 0xFF00; 
+		canSteerChecksumError = 0;
+		OPTimeLastCANRecieved = millis();
+		if(!OPSteeringControlMessageActive){
+			OPSteeringControlMessageStatusPending = true;  //im not sure this should be there TODO: check if its right
+			OPSteeringControlMessageStatusPendingData = true;
+		}
 		
 	} else{
-		OPLkasActive = false;
-		// TODO: send/set/notify something to show there was an error... 
+		
+		// TODO: send/set/notify something to show there was an error...
+		// The intent is to do nothing in the event of a counter/checksum error of the CAN message.  if the last state was LKAS ACTIVE(on), and no messages are received in 50ms,
+		// the handleLKAStoEPS code will fatal error the CAN and require a restart 
 	}
-	OPSteeringControlMessageStatusPending = true;  //im not sure this should be there TODO: check if its right
-	OPTimeLastCANRecieved = millis();
 
 }
 

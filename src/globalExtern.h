@@ -77,4 +77,16 @@ extern uint8_t OPSteeringControlMessageStatusPending;
 
 extern uint8_t LkasFromCanChecksumError;
 
+
+extern uint8_t canSteerChecksumError;
+extern uint8_t canSteerChecksumFatalError;
+extern uint8_t EPStoLKASChecksumError;
+extern uint8_t EPStoLKASChecksumFatalError;
+extern uint8_t OPSteeringControlMsgActive;
+extern uint8_t LKAStoEPSForwarding;
+extern uint8_t OPSteeringMsgLate;
+extern uint8_t OPSteeringMsgFatalLate ;
+extern uint8_t canSteerCounterError ;
+extern uint8_t canSteerCounterFatalError ;
+
 #endif

@@ -20,33 +20,19 @@ void handleLKAStoEPS(){
 	uint8_t rcvdByte = LKAStoEPS_Serial.read();
 	deconstructLKASMessage(rcvdByte);
 	
-	// OLD version
-    // if(OPSteeringControlMessageActive && !LkasFromCanFatalError){
-    //     
-    //     if(incomingMsg.counterBit == 0){
-    //         if(OPLkasActive) createKLinMessageWBigSteerAndLittleSteer(OPBigSteer,OPLittleSteer);
-    //         else sendArrayToLKAStoEPSSerial(&lkas_off_array[incomingMsg.counterBit][0]); 
-    //     }
-    //     if(	(millis() - OPTimeLastCANRecieved) > 50 ){
-    //         LkasFromCanFatalError = true;
-    //         LkasFromCanStatus = 1;
-    //     }
-    // } if(OPSteeringControlMessageActive) {
-    //     if(incomingMsg.counterBit == 0) sendArrayToLKAStoEPSSerial(&lkas_off_array[incomingMsg.counterBit][0]); 
-    // } else{
-    //     LKAStoEPS_Serial.write(rcvdByte);    
-    // }
-
 	//new version
-	if(incomingMsg.totalCounter == 0){   
-		OPSteeringControlMessageActive = OPSteeringControlMessageStatusPending;
-		OPSteeringControlMessageActive = true; /// this was to test if there was other issues.
-		// if(LkasFromCanFatalError) OPLkasActive = false;
+	if(incomingMsg.totalCounter == 0){  
+		if(OPSteeringControlMessageStatusPending){
+			OPSteeringControlMessageActive = OPSteeringControlMessageStatusPendingData;
+			OPSteeringControlMessageStatusPending = false;
+		} 
+		// OPSteeringControlMessageActive = true; /// this was to test if there was other issues.
+		if(LkasFromCanFatalError) OPLkasActive = false;
 		if(OPSteeringControlMessageActive ){
 			if(OPLkasActive) createKLinMessageWBigSteerAndLittleSteer(OPBigSteer,OPLittleSteer);
             else sendArrayToLKAStoEPSSerial(&lkas_off_array[incomingMsg.counterBit][0]);
 		} else { // if OPSteeringControlMessageActive is false
-			sendArrayToLKAStoEPSSerial(&lkas_off_array[incomingMsg.counterBit][0]);
+			LKAStoEPS_Serial.write(rcvdByte);
 		}
 	}else { // not the first byte in the frame
 		if(!OPSteeringControlMessageActive) LKAStoEPS_Serial.write(rcvdByte);
@@ -60,7 +46,6 @@ void handleLKAStoEPS(){
 		printuint_t(rcvdByte);
 #endif
 }
-
 
 
 

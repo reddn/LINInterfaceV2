@@ -58,8 +58,9 @@ void handleEPStoLKAS(){
 
         buildSteerMotorTorqueCanMsg();
         buildSteerStatusCanMsg();
-        buildSendAllLinDataCanMsg();
-        buildSendEps2LkasValuesWhole();
+        if(!OPSteeringControlMessageActive) buildSendAllLinDataCanMsg();
+        else buildSendAllLinDataCanMsg(); // remove this.. only for testing
+        buildSendEps2LkasValuesWhole();     // this is for testing.. to be removed
         steerTorque =  (EPStoLKASBuffer[0] << 5 )  & B11100000;
         steerTorque |= EPStoLKASBuffer[1] & B00011111;
         if ( (EPStoLKASBuffer[0] >> 3) == 1 ) { //its negative  // this isn't right... needs to &  B00000001

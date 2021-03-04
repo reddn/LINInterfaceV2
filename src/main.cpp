@@ -1,6 +1,5 @@
 #include "defines.h"
 #include <Arduino.h>
-// #include <FlexCAN_T4.h>
 #include "globalVars.h"
 #include <eXoCAN.h>
 #include  "canMessages.h"
@@ -15,19 +14,18 @@ uint8_t blueLedOn = 0;
 void handleLedFlashing();
 
 //called from the main loop.  reads only when needed by the TIME_BETWEEN_DIGIAL_READS define, in milliseconds
-//this helps from too many digitalRead calls slowing down reading from the other buses.
-//reads all Pushbuttons and DIP switches to set them into a variable.  
-//also reads the POT
+//mainly so it doesnt do these checks in series of the main loop    
 void handleInputReads(){
 	if( ( millis() - lastDigitalReadTime ) > TIME_BETWEEN_DIGITIAL_READS){
 		handleLedFlashing();
 		
 		if(LkasFromCanChecksumErrorCount > 2){
-			OPSteeringControlMessageStatusPending = false;
+			// OPSteeringControlMessageStatusPending = true;
+			// OPSteeringControlMessageStatusPendingData = false;
 			LkasFromCanFatalError = true;
-			LkasFromCanStatus = 2;
-			LkasFromCanChecksumError = 1;
+			canSteerChecksumFatalError = 1;
 		} else if(!LkasFromCanFatalError) LkasFromCanChecksumErrorCount = 0;
+
 
 		if(OPTimeLastCANRecieved != 0){
 			if(OPLkasActive) mainLedBlinkTimer = 500;
@@ -46,19 +44,14 @@ void handleInputReads(){
 } // end handleInputReads
 
 void handleLedFlashing(){
-	//OPSteeringControlMessageActive;
 	
 	digitalWrite(STATUS_LED,( EPStoLKASBuffer[2] >> 2 ) & B00000001);
 
 	if( (millis() - lastRedLedToggle ) > mainLedBlinkTimer) {
-		if(blueLedOn) {
-			digitalWrite(BLUE_LED,0);
-			blueLedOn = 0;
-		} else{
-			analogWrite(BLUE_LED,40);
-			blueLedOn = 1;
-		}
+		lastRedLedToggle = millis();
+		analogWrite(BLUE_LED,40);
 	}
+	else digitalWrite(BLUE_LED,0);
 } // end handleLedFlashing()
 
                     /*************** S E T U P ***************/

@@ -87,7 +87,24 @@ uint8_t LkasFromCanStatus = 0; //1 = missed 5 consecutive frames .. 2= 2 bad che
 int16_t steerTorque = 0;
 
 uint8_t OPSteeringControlMessageStatusPending = false;
+uint8_t OPSteeringControlMessageStatusPendingData = false;
+
 
 uint8_t LkasFromCanChecksumError = 0;
+
+uint8_t canSteerChecksumError = 0;
+uint8_t canSteerChecksumFatalError = 0;
+uint8_t EPStoLKASChecksumError = 0;
+uint8_t EPStoLKASChecksumFatalError = 0;
+uint8_t OPSteeringControlMsgActive = 0;
+uint8_t LKAStoEPSForwarding = 0;
+uint8_t OPSteeringMsgLate = 0;
+uint8_t OPSteeringMsgFatalLate = 0;
+uint8_t canSteerCounterError = 0;
+uint8_t canSteerCounterFatalError = 0;
+
+
+
+
 
 #endif
