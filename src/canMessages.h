@@ -49,14 +49,26 @@ void buildSteerMotorTorqueCanMsg(){ //TODO: add to decclaration
 	// CAN_msg_t msg;
 	msg.id = 427;
 	msg.len = 3;
-	msg.buf[0] = (EPStoLKASBuffer[2] << 2 ) & B11100000;  //1 LSB bit of bigSteerTorque /// redone> this is the big torque steer 
-	msg.buf[0] |= (EPStoLKASBuffer[3] >> 2) & B00011111 ; // all of SmallSteerTorque   ///redone this is the 5MSB of little torque steer
-	msg.buf[1] = ( EPStoLKASBuffer[2] >> 4 ) & B00000011; // 2 MSB of bigSteerTorque 	//redone this is the 2LSB of little torque steer on the MSB of the next byte
-	msg.buf[1] |= ( EPStoLKASBuffer[1] << 2 ) & B10000000;  // this is output_disabled_inverted
-	msg.buf[1] |= ( EPStoLKASBuffer[2] << 2 )& B00011100; //UNK_3bit_1
-	msg.buf[1] |=  EPStoLKASBuffer[2] & B01000000; //output_disabled
+	msg.buf[0] =  ( EPStoLKASBuffer[2] << 2 ) & B11100000;  //1 LSB bit of bigSteerTorque /// redone> this is the big torque steer 
+	msg.buf[0] |= ( EPStoLKASBuffer[3] >> 2) & B00011111 ; // all of SmallSteerTorque   ///redone this is the 5MSB of little torque steer
+	msg.buf[1] =  ( EPStoLKASBuffer[2] >> 4 ) & B00000011; // 2 MSB of bigSteerTorque 	//redone this is the 2LSB of little torque steer on the MSB of the next byte
 	
-	msg.buf[2] = (OPCanCounter << 4 ); // put in the counter
+	msg.buf[1] |= ( incomingMsg.data[0] >> 2 ) & B00000100; //LKAS B0 O4  into CAN B1 O2
+	msg.buf[1] |= ( EPStoLKASBuffer[0]  >> 1 ) & B00001000; //EPS  B0 O4  into CAN B1 O3
+	msg.buf[1] |= ( EPStoLKASBuffer[0]  >> 2 ) & B00010000; //EPS  B0 O6  into CAN B1 O4
+	msg.buf[1] |= ( EPStoLKASBuffer[1]  >> 1 ) & B00100000; //EPS  B1 O6  into CAN B1 O5
+	msg.buf[1] |= ( EPStoLKASBuffer[2]  << 6 ) & B11000000; //EPS  B2 O0  into CAN B1 O6
+															//EPS  B2 O1  into CAN B1 O7
+
+	// msg.buf[1] |= ( EPStoLKASBuffer[2] << 2 ) & B10000000;  // this is output_disabled_inverted
+	// msg.buf[1] |= ( EPStoLKASBuffer[2] << 2 )& B00011100; //UNK_3bit_1
+	// msg.buf[1] |=   EPStoLKASBuffer[2] & B01000000; //output_disabled
+	
+
+	msg.buf[2] =  (OPCanCounter << 4 ); // put in the counter
+	msg.buf[2] |= ( EPStoLKASBuffer[2] << 4 ) & B0100000; //EPS  B2 O2  into CAN B2 O6 
+	msg.buf[2] |= ( EPStoLKASBuffer[2] << 1 ) & B1000000; //EPS  B2 O6  into CAN B2 O7 
+
 	msg.buf[2] |= honda_compute_checksum(&msg.buf[0],3,(unsigned int)msg.id);
 	
 	sendCanMsg(&msg);
@@ -127,7 +139,7 @@ void buildSendAllLinDataCanMsg(){
 
 	msg.buf[7] = (OPCanCounter << 4 ); // put in the counter
 	msg.buf[7] |= honda_compute_checksum(&msg.buf[0],msg.len,(unsigned int) msg.id);
-	// FCAN.write(msg);
+
 	sendCanMsg(&msg);
 }
 
@@ -146,8 +158,6 @@ void buildSendEps2LkasValuesWhole(){
 
 	msg.buf[1] |=  EPStoLKASBuffer[3] << 1; //little motor torque @ B11111110
 	msg.buf[2] =  (EPStoLKASBuffer[2] >> 3 ) & B00000111; //big motor torque at @ B00000111
-	msg.buf[5] =  EPStoLKASBuffer[2];
-	msg.buf[6] =  EPStoLKASBuffer[3]; 
 
 	msg.buf[7] = (OPCanCounter << 4 ); // put in the counter
 	msg.buf[7] |= honda_compute_checksum(&msg.buf[0],msg.len,(unsigned int) msg.id);
@@ -159,11 +169,7 @@ void buildSendEps2LkasValuesWhole(){
 
 void handleLkasFromCanV3(){
 
-	//TESTING
 	if(canMsg.txMsgID != 228) return;
-
-
-
 
 // 	BO_ 228 STEERING_CONTROL: 5 ADAS
 //  SG_ STEER_TORQUE : 7|16@0- (1,0) [-3840|3840] "" EPS
@@ -171,17 +177,6 @@ void handleLkasFromCanV3(){
 //  SG_ SET_ME_X00 : 31|8@0+ (1,0) [0|0] "" EPS
 //  SG_ COUNTER : 37|2@0+ (1,0) [0|3] "" EPS
 //  SG_ CHECKSUM : 35|4@0+ (1,0) [0|3] "" EPS
-	// if(canMsg.txMsgID != 228) return;
-
-
-// #ifdef DEBUG_PRINT_OPtoCAN_INPUT
-// 	outputSerial.print("\nCANmsg rcvd id: ");
-// 	outputSerial.print(canmsg.txMsgID,DEC);
-// 	outputSerial.print(":");
-// 	for(uint8_t bb = 0; bb < canmsg.txMsgLen; bb++){
-// 		printuint_t(canMsg.txMsg.bytes[bb]);
-// 	}
-// #endif 
 
 	if((canMsg.txMsg.bytes[2] >> 7) == 1 ){ // if STEER REQUEST (aka LKAS enabled)
 		OPLkasActive = true;

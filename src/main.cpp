@@ -55,7 +55,7 @@ void handleLedFlashing(){
 			digitalWrite(BLUE_LED,0);
 			blueLedOn = 0;
 		} else{
-			analogWrite(BLUE_LED,128);
+			analogWrite(BLUE_LED,40);
 			blueLedOn = 1;
 		}
 	}
