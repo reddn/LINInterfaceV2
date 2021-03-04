@@ -188,8 +188,6 @@ void handleLkasFromCanV3(){
 //  SG_ COUNTER : 37|2@0+ (1,0) [0|3] "" EPS
 //  SG_ CHECKSUM : 35|4@0+ (1,0) [0|3] "" EPS
 
-	
-
 	uint8_t lclBigSteer = 0;
 	uint8_t lclLittleSteer = 0;
 	
@@ -219,10 +217,15 @@ void handleLkasFromCanV3(){
 
 	if(honda_compute_checksum((uint8_t*) &canMsg.txMsg.bytes[0],5, 228U) == (canMsg.txMsg.bytes[5] & B00001111 )) {
 		checksumVerified = true;
+		canSteerChecksumError = 0;
 	}
 	else {
 		LkasFromCanChecksumErrorCount++;
 		canSteerChecksumError = 1;
+		if(LkasFromCanChecksumErrorCount > 2){
+			LkasFromCanFatalError = 1;
+			canSteerChecksumFatalError = 1;
+		}
 	}
 	
 
@@ -259,10 +262,7 @@ void handleLkasFromCanV3(){
 		// The intent is to do nothing in the event of a counter/checksum error of the CAN message.  if the last state was LKAS ACTIVE(on), and no messages are received in 50ms,
 		// the handleLKAStoEPS code will fatal error the CAN and require a restart 
 	}
-
 }
-
-
 
 uint8_t getNextOpenTxMailbox(){
 	// uint8_t openMailbox =255;

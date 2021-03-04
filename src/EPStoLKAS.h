@@ -46,8 +46,7 @@ void handleEPStoLKAS(){
             EPStoLKASBufferModified[EPStoLKASBufferCounter] = rcvdByte;
 
         } 
-        EPStoLKAS_Serial.write(EPStoLKASBuffer[EPStoLKASBufferCounter]); // added to figure out the FCW error
-        // EPStoLKAS_Serial.write(rcvdByte); // commenting out to figure out the FCW error
+        EPStoLKAS_Serial.write(EPStoLKASBuffer[EPStoLKASBufferCounter]); // just forward the data that came in from the EPS.. turns out it doesnt care if its showing LKAS_ACTIVE
 
         EPStoLKASBufferCounter++;
         if(EPStoLKASBufferCounter < 5) return;  //only reason for using 5 is im using the incrmeent, so its really still on 3, but is incremented to 4 early, so it really needs to be 5 
@@ -60,7 +59,7 @@ void handleEPStoLKAS(){
         buildSteerStatusCanMsg();
         if(!OPSteeringControlMessageActive) buildSendAllLinDataCanMsg();
         else buildSendAllLinDataCanMsg(); // remove this.. only for testing
-        buildSendEps2LkasValuesWhole();     // this is for testing.. to be removed
+        buildSendEps2LkasValuesWhole();     // this is for testing.. to be removed.  remove this
         steerTorque =  (EPStoLKASBuffer[0] << 5 )  & B11100000;
         steerTorque |= EPStoLKASBuffer[1] & B00011111;
         if ( (EPStoLKASBuffer[0] >> 3) == 1 ) { //its negative  // this isn't right... needs to &  B00000001
@@ -79,7 +78,7 @@ void handleEPStoLKAS(){
 
 
 
-void handleEPStoLKASKeepMcuHappy(uint8_t rcvdByte){
+void handleEPStoLKASKeepMcuHappy(uint8_t rcvdByte){ // this is dead
 
 	if(EPStoLKASBufferCounter == 0){
 		//TODO: send actual steering torque values

@@ -37,6 +37,15 @@ void handleLKAStoEPS(){
 	}else { // not the first byte in the frame
 		if(!OPSteeringControlMessageActive) LKAStoEPS_Serial.write(rcvdByte);
 	}
+	uint8_t OPTimeLastCANRecievedDiff = millis() - OPTimeLastCANRecieved;
+	if(OPTimeLastCANRecievedDiff > 15){
+		if(OPTimeLastCANRecievedDiff > 55) {
+			OPSteeringMsgFatalLate = 1;
+			LkasFromCanFatalError  = 1;
+		}
+		OPSteeringMsgLate = 1;
+	}
+	else OPSteeringMsgLate = 0;
 
 
 #ifdef DEBUG_PRINT_LKAStoEPS_LIN_INPUT
