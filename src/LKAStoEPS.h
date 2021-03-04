@@ -28,7 +28,6 @@ void handleLKAStoEPS(){
 		} 
 		// OPSteeringControlMessageActive = true; /// this was to test if there was other issues.
 		if(LkasFromCanFatalError) OPLkasActive = false;
-			// LkasFromCanFatalError = 0; // TESTing ..remove for production TODO
 		if(OPSteeringControlMessageActive ){
 			if(OPLkasActive) createKLinMessageWBigSteerAndLittleSteer(OPBigSteer,OPLittleSteer);
             else sendArrayToLKAStoEPSSerial(&lkas_off_array[incomingMsg.counterBit][0]);
@@ -48,7 +47,6 @@ void handleLKAStoEPS(){
 	}else { // not the first byte in the frame
 		if(!OPSteeringControlMessageActive) LKAStoEPS_Serial.write(rcvdByte);
 	}
-	// LkasFromCanFatalError = 0; // TESTing ..remove for production TODO
 	
 
 
