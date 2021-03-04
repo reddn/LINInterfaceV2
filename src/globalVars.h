@@ -102,7 +102,7 @@ uint8_t OPSteeringMsgLate = 0;
 uint8_t OPSteeringMsgFatalLate = 0;
 uint8_t canSteerCounterError = 0;
 uint8_t canSteerCounterFatalError = 0;
-
+uint8_t EPStoLKASLkasDisabled = 0;
 
 
 

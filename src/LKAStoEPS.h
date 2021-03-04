@@ -28,24 +28,28 @@ void handleLKAStoEPS(){
 		} 
 		// OPSteeringControlMessageActive = true; /// this was to test if there was other issues.
 		if(LkasFromCanFatalError) OPLkasActive = false;
+			// LkasFromCanFatalError = 0; // TESTing ..remove for production TODO
 		if(OPSteeringControlMessageActive ){
 			if(OPLkasActive) createKLinMessageWBigSteerAndLittleSteer(OPBigSteer,OPLittleSteer);
             else sendArrayToLKAStoEPSSerial(&lkas_off_array[incomingMsg.counterBit][0]);
+
+			uint8_t OPTimeLastCANRecievedDiff = millis() - OPTimeLastCANRecieved;
+			if(OPTimeLastCANRecievedDiff > 15){
+				if(OPTimeLastCANRecievedDiff > 55) {
+					OPSteeringMsgFatalLate = 1;
+					LkasFromCanFatalError  = 1;
+				}
+				OPSteeringMsgLate = 1;
+			}
+			else OPSteeringMsgLate = 0;
 		} else { // if OPSteeringControlMessageActive is false
 			LKAStoEPS_Serial.write(rcvdByte);
 		}
 	}else { // not the first byte in the frame
 		if(!OPSteeringControlMessageActive) LKAStoEPS_Serial.write(rcvdByte);
 	}
-	uint8_t OPTimeLastCANRecievedDiff = millis() - OPTimeLastCANRecieved;
-	if(OPTimeLastCANRecievedDiff > 15){
-		if(OPTimeLastCANRecievedDiff > 55) {
-			OPSteeringMsgFatalLate = 1;
-			LkasFromCanFatalError  = 1;
-		}
-		OPSteeringMsgLate = 1;
-	}
-	else OPSteeringMsgLate = 0;
+	// LkasFromCanFatalError = 0; // TESTing ..remove for production TODO
+	
 
 
 #ifdef DEBUG_PRINT_LKAStoEPS_LIN_INPUT

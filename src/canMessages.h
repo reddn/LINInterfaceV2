@@ -121,7 +121,7 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 	msg.buf[2] |= OPSteeringMsgFatalLate << 7;		// CAN B2 O7
 
 	msg.buf[3]  = (OPCanCounter << 4 );				// put in the counter
-	msg.buf[3] |= honda_compute_checksum(&msg.buf[0],3,(unsigned int) msg.id);
+	msg.buf[3] |= honda_compute_checksum(&msg.buf[0], msg.len, (unsigned int) msg.id);
 	// FCAN.write(msg);
 	sendCanMsg(&msg);
 }
@@ -179,7 +179,6 @@ void buildSendEps2LkasValuesWhole(){
 
 void handleLkasFromCanV3(){
 
-	if(canMsg.txMsgID != 228) return;
 
 // 	BO_ 228 STEERING_CONTROL: 5 ADAS
 //  SG_ STEER_TORQUE : 7|16@0- (1,0) [-3840|3840] "" EPS
@@ -188,6 +187,7 @@ void handleLkasFromCanV3(){
 //  SG_ COUNTER : 37|2@0+ (1,0) [0|3] "" EPS
 //  SG_ CHECKSUM : 35|4@0+ (1,0) [0|3] "" EPS
 
+	if(canMsg.txMsgID != 228) return;
 	uint8_t lclBigSteer = 0;
 	uint8_t lclLittleSteer = 0;
 	
@@ -197,9 +197,8 @@ void handleLkasFromCanV3(){
 	lclLittleSteer = canMsg.txMsg.bytes[1] & B00011111 ;
 	
 		// TODO: verify counter is working
-	uint8_t lclCounter = canMsg.txMsg.bytes[4] >> 4;
+	uint8_t lclCounter = (canMsg.txMsg.bytes[4] >> 4) & B00000011;
 	bool counterVerified = true;  // need global counter   and counter error
-
 	if(LkasFromCanCounter != lclCounter){
 		LkasFromCanCounterErrorCount++;
 		canSteerCounterError = 1;
@@ -208,14 +207,16 @@ void handleLkasFromCanV3(){
 			canSteerCounterFatalError = 1;
 			LkasFromCanFatalError = 1;
 		}
+		// LkasFromCanCounter = lclCounter;
 	} else {
 		canSteerCounterError = 0;
 	}
 	LkasFromCanCounter = (lclCounter + 1U) & B00000011;  //if  lclCounter is 3,  adding 1 is 4 B00000100, which is zero if & B00000100
+	// LkasFromCanFatalError = 0; // TESTING remove todo
 	
 	bool checksumVerified = false;
 
-	if(honda_compute_checksum((uint8_t*) &canMsg.txMsg.bytes[0],5, 228U) == (canMsg.txMsg.bytes[5] & B00001111 )) {
+	if(honda_compute_checksum((uint8_t*) &canMsg.txMsg.bytes[0],5, 228U) == (canMsg.txMsg.bytes[4] & B00001111 )) {
 		checksumVerified = true;
 		canSteerChecksumError = 0;
 	}
@@ -250,7 +251,6 @@ void handleLkasFromCanV3(){
 		OPApply_steer |= lclLittleSteer;
 		if((lclBigSteer >> 3) == 1) OPApply_steer |= 0xFF00; 
 		canSteerChecksumError = 0;
-		OPTimeLastCANRecieved = millis();
 		if(!OPSteeringControlMessageActive){
 			OPSteeringControlMessageStatusPending = true;  //im not sure this should be there TODO: check if its right
 			OPSteeringControlMessageStatusPendingData = true;
@@ -262,6 +262,7 @@ void handleLkasFromCanV3(){
 		// The intent is to do nothing in the event of a counter/checksum error of the CAN message.  if the last state was LKAS ACTIVE(on), and no messages are received in 50ms,
 		// the handleLKAStoEPS code will fatal error the CAN and require a restart 
 	}
+	OPTimeLastCANRecieved = millis();
 }
 
 uint8_t getNextOpenTxMailbox(){

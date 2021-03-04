@@ -32,10 +32,11 @@ void handleInputReads(){
 			else if( (millis() - OPTimeLastCANRecieved) < 1000 ) mainLedBlinkTimer = 1000;
 			else mainLedBlinkTimer = 2000; 
 
-			if(	(millis() - OPTimeLastCANRecieved) > 50){
-				OPSteeringControlMessageStatusPending = false;
+			if(	(millis() - OPTimeLastCANRecieved) > 55){
+				OPSteeringControlMessageStatusPendingData = false;
+				OPSteeringControlMessageStatusPending = true;
 				LkasFromCanFatalError = true;
-				LkasFromCanStatus = 1;
+				OPSteeringMsgFatalLate = 1;
 			}
 		}
 
@@ -45,7 +46,7 @@ void handleInputReads(){
 
 void handleLedFlashing(){
 	
-	digitalWrite(STATUS_LED,( EPStoLKASBuffer[2] >> 2 ) & B00000001);
+	digitalWrite(STATUS_LED,LkasFromCanFatalError);
 
 	if( (millis() - lastRedLedToggle ) > mainLedBlinkTimer) {
 		lastRedLedToggle = millis();

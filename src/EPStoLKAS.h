@@ -55,6 +55,11 @@ void handleEPStoLKAS(){
         // This function builds the 2 CAN messages for MOTOR_TORQUE and STEER_TORQUE (input) from the EPStoLKAS 5 byte frame
         // but only does it after the whole frame is received and checksum'd
 
+        if( ( (EPStoLKASBuffer[2] >> 2 ) & 1U ) == 1) {
+            EPStoLKASLkasDisabled = 1;
+            LkasFromCanFatalError = 1; // todo fix uncomment for prodeuction
+        }
+
         buildSteerMotorTorqueCanMsg();
         buildSteerStatusCanMsg();
         if(!OPSteeringControlMessageActive) buildSendAllLinDataCanMsg();

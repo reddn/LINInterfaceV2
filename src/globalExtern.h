@@ -88,5 +88,6 @@ extern uint8_t OPSteeringMsgLate;
 extern uint8_t OPSteeringMsgFatalLate ;
 extern uint8_t canSteerCounterError ;
 extern uint8_t canSteerCounterFatalError ;
+extern uint8_t EPStoLKASLkasDisabled;
 
 #endif
