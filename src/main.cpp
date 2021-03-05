@@ -50,7 +50,7 @@ void handleLedFlashing(){
 
 	if( (millis() - lastRedLedToggle ) > mainLedBlinkTimer) {
 		lastRedLedToggle = millis();
-		analogWrite(BLUE_LED,40);
+		analogWrite(BLUE_LED,105);
 	}
 	else digitalWrite(BLUE_LED,0);
 } // end handleLedFlashing()
