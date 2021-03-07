@@ -53,7 +53,7 @@ void createKLinMessage(int16_t applySteer){
 #endif
 }
 
-// same as above 'createKLinMessage', but this accepts only the bigSteer and littleSteer as variables
+//the only funciton that can send a LKAS ON reqeuest to the EPS
 void createKLinMessageWBigSteerAndLittleSteer(uint8_t bigSteer, uint8_t littleSteer){
 	uint8_t msg[4];
 	msg[0] = (incomingMsg.counterBit << 5) |  bigSteer;
