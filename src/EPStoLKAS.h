@@ -5,10 +5,6 @@
 #include "canMessages.h"
 #include "sendSerial.h"
 
-void handleEPStoLKASKeepMcuHappy(uint8_t rcvdByte);
-
-
-
 void handleEPStoLKAS(){
 
     if(EPStoLKAS_Serial.available())
@@ -22,30 +18,28 @@ void handleEPStoLKAS(){
         }  
         EPStoLKASBuffer[EPStoLKASBufferCounter] = rcvdByte;
 
-        
+        // if(OPSteeringControlMessageActive){ // not needed since we are just raw dogging the MCU with data from the EPS (EPStoLKAS line)
+        //     switch(EPStoLKASBufferCounter){
+        //         case 0:
+        //             rcvdByte &= B00100000;
+        //             rcvdByte |= steerTorqueModifiedBigValue;
+        //             break;
+        //         case 1:
+        //             rcvdByte = eps_off_array[0][1] | steerTorqueModifiedLittleValue; 
+        //             break;
+        //         case 2:
+        //             rcvdByte = eps_off_array[0][2];
+        //             break;
+        //         case 3:
+        //             rcvdByte = eps_off_array[0][3];
+        //             break;
+        //         case 4:
+        //             rcvdByte = chksm(&EPStoLKASBufferModified[0],4);
+        //             // OPSteeringControlMessageActive = OPSteeringControlMessageStatusPending; // only should happen in 1 place. frist byte of LKAStoEPS frame
+        //     }
+        //     EPStoLKASBufferModified[EPStoLKASBufferCounter] = rcvdByte;
 
-        if(OPSteeringControlMessageActive){
-            switch(EPStoLKASBufferCounter){
-                case 0:
-                    rcvdByte &= B00100000;
-                    rcvdByte |= steerTorqueModifiedBigValue;
-                    break;
-                case 1:
-                    rcvdByte = eps_off_array[0][1] | steerTorqueModifiedLittleValue; 
-                    break;
-                case 2:
-                    rcvdByte = eps_off_array[0][2];
-                    break;
-                case 3:
-                    rcvdByte = eps_off_array[0][3];
-                    break;
-                case 4:
-                    rcvdByte = chksm(&EPStoLKASBufferModified[0],4);
-                    // OPSteeringControlMessageActive = OPSteeringControlMessageStatusPending; // only should happen in 1 place. frist byte of LKAStoEPS frame
-            }
-            EPStoLKASBufferModified[EPStoLKASBufferCounter] = rcvdByte;
-
-        } 
+        // } 
         EPStoLKAS_Serial.write(EPStoLKASBuffer[EPStoLKASBufferCounter]); // just forward the data that came in from the EPS.. turns out it doesnt care if its showing LKAS_ACTIVE
 
         EPStoLKASBufferCounter++;
@@ -70,34 +64,15 @@ void handleEPStoLKAS(){
         if ( (EPStoLKASBuffer[0] >> 3) == 1 ) { //its negative  // this isn't right... needs to &  B00000001
             steerTorque |= 0xFF00;
         } 
-        steerTorqueModified = steerTorque + OPApply_steer / 3;
-        steerTorqueModifiedBigValue = (uint8_t) ( steerTorqueModified >> 12 ) & B00001000;
-        steerTorqueModifiedBigValue |= (uint8_t) ( steerTorqueModified >> 5 ) & B11100000;
-        steerTorqueModifiedLittleValue = (uint8_t) steerTorqueModified & B0001111;
+        // steerTorqueModified = steerTorque + OPApply_steer / 3;
+        // steerTorqueModifiedBigValue = (uint8_t) ( steerTorqueModified >> 12 ) & B00001000;
+        // steerTorqueModifiedBigValue |= (uint8_t) ( steerTorqueModified >> 5 ) & B11100000;
+        // steerTorqueModifiedLittleValue = (uint8_t) steerTorqueModified & B0001111;
     
         if(++OPCanCounter > 3) OPCanCounter = 0;
         EPStoLKASBufferCounter = 0; //reset EPStoLKASBufferCounter to zero
     } // end if EPStoLKAS_Serial.available()
 } // end handleEPStoLKAS()
-
-
-
-
-void handleEPStoLKASKeepMcuHappy(uint8_t rcvdByte){ // this is dead
-
-	if(EPStoLKASBufferCounter == 0){
-		//TODO: send actual steering torque values
-			sendArrayToEPStoLKASSerial(&eps_off_array[incomingMsg.counterBit][0]);
-
-		
-		#ifdef DEBUG_PRINT_EPStoLKAS_LIN_OUTPUT
-		outputSerial.print("\nE-O:");
-		printArrayInBinary(&eps_off_array[incomingMsg.counterBit][0],5);
-		outputSerial.print("  ");
-		#endif
-	}
-	// EPStoLKAS_Serial.write(eps_off_array[incomingMsg.counterBit][EPStoLKASBufferCounter]);
-}
 
 
 

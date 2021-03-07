@@ -29,8 +29,13 @@ void handleLKAStoEPS(){
 		// OPSteeringControlMessageActive = true; /// this was to test if there was other issues.
 		if(LkasFromCanFatalError) OPLkasActive = false;
 		if(OPSteeringControlMessageActive ){
-			if(OPLkasActive) createKLinMessageWBigSteerAndLittleSteer(OPBigSteer,OPLittleSteer);
-            else sendArrayToLKAStoEPSSerial(&lkas_off_array[incomingMsg.counterBit][0]);
+			if(OPLkasActive){
+				createKLinMessageWBigSteerAndLittleSteer(OPBigSteer,OPLittleSteer);
+			} 
+            else {
+				sendArrayToLKAStoEPSSerial(&lkas_off_array[incomingMsg.counterBit][0]);
+				LkasOnIntroCountDown = 5;
+			}
 
 			uint8_t OPTimeLastCANRecievedDiff = millis() - OPTimeLastCANRecieved;
 			if(OPTimeLastCANRecievedDiff > 15){

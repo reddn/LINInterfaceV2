@@ -56,13 +56,21 @@ void createKLinMessage(int16_t applySteer){
 //the only funciton that can send a LKAS ON reqeuest to the EPS
 void createKLinMessageWBigSteerAndLittleSteer(uint8_t bigSteer, uint8_t littleSteer){
 	uint8_t msg[4];
-	msg[0] = (incomingMsg.counterBit << 5) |  bigSteer;
 	
 	
-	if(littleSteer > 0 || bigSteer > 0){
-		littleSteer = littleSteer & B00011110;
-		littleSteer = littleSteer | ( (lastLittleSteer1bit ^ 1 ) & B00000001);
+
+	if(LkasOnIntroCountDown > 0){ // LkasOnIntroCountDown is set to 5 when LKAS is off... 
+		littleSteer = 0;
+		bigSteer = 0;
+		LkasOnIntroCountDown--;
+	} else {
+		if(littleSteer > 0 || bigSteer > 0){ // little steer bit wiggle.. TODO: move this to OP carcontroller.py
+			littleSteer = littleSteer & B00011110;
+			littleSteer = littleSteer | ( (lastLittleSteer1bit ^ 1 ) & B00000001);
+		}
 	}
+
+	msg[0] = (incomingMsg.counterBit << 5) |  bigSteer;
 
 	//get the little steer in the 2nd byte. its the last 5 bits of applysteer. also add in the 0xA0 = 1010 0000
 	msg[1] = littleSteer | 0xA0;  // 1010 0000
