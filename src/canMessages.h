@@ -116,7 +116,7 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 	
 	msg.buf[2]  = canSteerCounterError;				// CAN B2 O0
 	msg.buf[2] |= canSteerCounterFatalError << 1;	// CAN B2 O1 
-	msg.buf[2] |= (EPStoLKASBuffer[2] >> 1) & B00000010;	// CAN B2 O2 //this is LKAS_DISABLED from the EPS
+	msg.buf[2] |= (EPStoLKASBuffer[2] & B00000100);	// CAN B2 O2 //this is LKAS_DISABLED from the EPS
 	msg.buf[2] |= LKAStoEPSForwarding << 5; 		// CAN B2 O5
 	msg.buf[2] |= OPSteeringMsgLate << 6; 			// CAN B2 O6
 	msg.buf[2] |= OPSteeringMsgFatalLate << 7;		// CAN B2 O7
@@ -213,7 +213,6 @@ void handleLkasFromCanV3(){
 		canSteerCounterError = 0;
 	}
 	LkasFromCanCounter = (lclCounter + 1U) & B00000011;  //if  lclCounter is 3,  adding 1 is 4 B00000100, which is zero if & B00000100
-	// LkasFromCanFatalError = 0; // TESTING remove todo
 	
 	bool checksumVerified = false;
 

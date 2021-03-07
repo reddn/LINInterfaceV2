@@ -20,11 +20,14 @@ void handleInputReads(){
 		handleLedFlashing();
 		
 		if(LkasFromCanChecksumErrorCount > 2){
-			// OPSteeringControlMessageStatusPending = true;
-			// OPSteeringControlMessageStatusPendingData = false;
-			LkasFromCanFatalError = true;
+			LkasFromCanFatalError = 1;
 			canSteerChecksumFatalError = 1;
-		} else if(!LkasFromCanFatalError) LkasFromCanChecksumErrorCount = 0;
+		} else  LkasFromCanChecksumErrorCount = 0;;
+
+		if(LkasFromCanCounterErrorCount > 2) {
+			canSteerCounterFatalError = 1;
+			LkasFromCanFatalError = 1;
+		} else LkasFromCanCounterErrorCount = 0;
 
 
 		if(OPTimeLastCANRecieved != 0){
@@ -35,7 +38,7 @@ void handleInputReads(){
 			if(	(millis() - OPTimeLastCANRecieved) > 55){
 				OPSteeringControlMessageStatusPendingData = false;
 				OPSteeringControlMessageStatusPending = true;
-				LkasFromCanFatalError = true;
+				LkasFromCanFatalError = 1;
 				OPSteeringMsgFatalLate = 1;
 			}
 		}
