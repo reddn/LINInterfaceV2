@@ -9,16 +9,24 @@
 #include "struct.h"
 #include "sendSerial.h"
 
+#define VERSION_YEAR 21
+#define VERSION_MONTH 03
+#define VERSION_DAY 07
+#define VERSION_BUILD 3
+#define VERSION_HW 2
+
+
 uint8_t blueLedOn = 0;
 
 void handleLedFlashing();
+void handleSendFirmwareVersion();
 
 //called from the main loop.  reads only when needed by the TIME_BETWEEN_DIGIAL_READS define, in milliseconds
 //mainly so it doesnt do these checks in series of the main loop    
 void handleInputReads(){
 	if( ( millis() - lastDigitalReadTime ) > TIME_BETWEEN_DIGITIAL_READS){
 		handleLedFlashing();
-		
+		handleSendFirmwareVersion();
 		if(LkasFromCanChecksumErrorCount > 2){
 			LkasFromCanFatalError = 1;
 			canSteerChecksumFatalError = 1;
@@ -77,6 +85,29 @@ void setup() {
 
 }
 int zeroVal = 0;
+
+#define VERSION_YEAR 21
+#define VERSION_MONTH 03
+#define VERSION_DAY 07
+#define VERSION_BUILD 0
+#define VERSION_HW 2
+
+uint8_t sendFirmwareToCanCounter = 230;
+void handleSendFirmwareVersion(){
+	if(sendFirmwareToCanCounter++ == 0){
+		CAN_msg_t thisCanMsg;
+		thisCanMsg.id = 0x208;
+		thisCanMsg.len = 5;
+		thisCanMsg.buf[0] = VERSION_YEAR;
+		thisCanMsg.buf[1] = VERSION_MONTH;
+		thisCanMsg.buf[2] = VERSION_DAY;
+		thisCanMsg.buf[3] = VERSION_BUILD;
+		thisCanMsg.buf[4] = VERSION_HW;
+		// FCAN.write(thisCanMsg);
+		// can.transmit(thisCanMsg.id,thisCanMsg.buf, thisCanMsg.len);
+		sendCanMsg(&thisCanMsg);
+	}
+}
 
                     /*************** L O O P ***************/
 void loop() {
