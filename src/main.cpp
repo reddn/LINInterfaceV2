@@ -12,7 +12,7 @@
 #define VERSION_YEAR 21
 #define VERSION_MONTH 03
 #define VERSION_DAY 07
-#define VERSION_BUILD 3
+#define VERSION_BUILD 4
 #define VERSION_HW 2
 
 
@@ -86,11 +86,6 @@ void setup() {
 }
 int zeroVal = 0;
 
-#define VERSION_YEAR 21
-#define VERSION_MONTH 03
-#define VERSION_DAY 07
-#define VERSION_BUILD 0
-#define VERSION_HW 2
 
 uint8_t sendFirmwareToCanCounter = 230;
 void handleSendFirmwareVersion(){
