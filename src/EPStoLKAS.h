@@ -53,7 +53,7 @@ void handleEPStoLKAS(){
             EPStoLKASLkasDisabled = 1;
             LkasFromCanFatalError = 1; // todo fix uncomment for prodeuction
         }
-
+        
         buildSteerMotorTorqueCanMsg();
         buildSteerStatusCanMsg();
         if(!OPSteeringControlMessageActive) buildSendAllLinDataCanMsg();

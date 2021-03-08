@@ -208,7 +208,6 @@ void handleLkasFromCanV3(){
 			canSteerCounterFatalError = 1;
 			LkasFromCanFatalError = 1;
 		}
-		// LkasFromCanCounter = lclCounter;
 	} else {
 		canSteerCounterError = 0;
 	}
@@ -229,10 +228,6 @@ void handleLkasFromCanV3(){
 		}
 	}
 	
-
-	// TODO: Fix this, hard coded to true for testing
-	// counterVerified = true;
-	// checksumVerified = true;
 
 	//canbus data time is checked in the handleLkastoEPS function, if no data has been received within 50ms . LKAS is not allowed to be active
 
@@ -255,7 +250,8 @@ void handleLkasFromCanV3(){
 			OPSteeringControlMessageStatusPending = true;  //im not sure this should be there TODO: check if its right
 			OPSteeringControlMessageStatusPendingData = true;
 		}
-		
+		sendSteerStatusToCan = 0;
+		send
 	} else{
 		
 		// TODO: send/set/notify something to show there was an error...

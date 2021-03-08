@@ -1,0 +1,10 @@
+not sure where i put the other 'notes'
+
+regarding the 'steer_status' bits found in the EPStoLKAS
+ 
+mlocoteta tested on 210304 by allowing 250/251 to be sent on steer_torque.  previously we set the max at 240. which allowed 241 due to wiggle bit in LIN board code 
+    (since removed as OP should do this).  After 6 frames over 241, EPS errored and stopped applying torque.
+    the following bits went from 0 to 1:
+        EPS B0O4
+        EPS B2O0
+        EPS B2O1

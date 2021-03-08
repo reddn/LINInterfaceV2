@@ -1,0 +1,11 @@
+shift steer status  
+    eps laks disabled
+over 2 to the MSB.
+AND
+put 
+    can steer counter error
+    can steer counter fatal
+to the last byte at the 2 most MSB making a 4 bit hole
+
+
+put the 4 'unknown bits'  at the new hole at B2 O0-O3
