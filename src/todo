@@ -1,11 +1,27 @@
-shift steer status  
-    eps laks disabled
-over 2 to the MSB.
-AND
-put 
-    can steer counter error
-    can steer counter fatal
-to the last byte at the 2 most MSB making a 4 bit hole
+see what the other errors are... 
+
+oversteer (angle too great)
+
+over driver torque
+
+over LKAS torque --- FOUND... 1011 bits 
 
 
-put the 4 'unknown bits'  at the new hole at B2 O0-O3
+
+1. shift steer status  
+        eps laks disabled
+    over 2 to the MSB.
+    AND
+    put 
+        can steer counter error
+        can steer counter fatal
+    to the last byte at the 2 most MSB making a 4 bit hole
+
+
+2. put the 4 'unknown bits'  at the new hole at B2 O0-O3
+
+3. change the DBC as stated above.
+
+4. maybe remove EPS_LKAS_DISABLED
+
+5. mod the OP code to work as i want it to...
