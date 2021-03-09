@@ -97,6 +97,6 @@ extern uint8_t sendLinWholeDataFrameToCan;
 
 extern uint8_t LKAStoEPS_LDW_Signals;
 
-extern uint8_t enableLinWiggleBitFromCan;
+extern uint8_t disableLinWiggleBitFromCan;
 
 #endif

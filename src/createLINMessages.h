@@ -64,7 +64,7 @@ void createKLinMessageWBigSteerAndLittleSteer(uint8_t bigSteer, uint8_t littleSt
 		bigSteer = 0;
 		LkasOnIntroCountDown--;
 	} else {
-		if( (littleSteer > 0 || bigSteer > 0 ) && enableLinWiggleBitFromCan){ // little steer bit wiggle.. TODO: move this to OP carcontroller.py
+		if( (littleSteer > 0 || bigSteer > 0 ) && !disableLinWiggleBitFromCan){ // little steer bit wiggle.. TODO: move this to OP carcontroller.py
 			littleSteer = littleSteer & B00011110;
 			littleSteer = littleSteer | ( (lastLittleSteer1bit ^ 1 ) & B00000001);
 		}

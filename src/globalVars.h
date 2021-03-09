@@ -111,6 +111,6 @@ uint8_t sendLinWholeDataFrameToCan = 0;
 
 uint8_t LKAStoEPS_LDW_Signals = 0;
 
-uint8_t enableLinWiggleBitFromCan = 0;
+uint8_t disableLinWiggleBitFromCan = 0;
 
 #endif
