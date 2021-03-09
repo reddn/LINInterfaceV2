@@ -7,11 +7,12 @@ over driver torque
 over LKAS torque --- FOUND... 1011 bits 
 
 
-
+DONE
 --. added if's for sending the CAN line data.  DONE 210308
 
+
 1. shift steer status  
-        eps laks disabled
+        eps laks disabled-- remove
     over 2 to the MSB.
     AND
     put 
