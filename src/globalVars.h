@@ -72,7 +72,7 @@ uint8_t LinInterfaceFatalError = 0;
 
 uint8_t OPCanCounter = 0;
 
-uint16_t mainLedBlinkTimer = 2000;
+uint16_t mainLedBlinkTimer = 30000;
 
 unsigned long lastDigitalReadTime = 0;
 

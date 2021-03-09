@@ -12,7 +12,7 @@
 #define VERSION_YEAR 21
 #define VERSION_MONTH 3
 #define VERSION_DAY 9
-#define VERSION_BUILD 4
+#define VERSION_BUILD 6
 #define VERSION_HW 2
 
 
@@ -39,9 +39,9 @@ void handleInputReads(){
 
 
 		if(OPTimeLastCANRecieved != 0){
-			if(OPLkasActive) mainLedBlinkTimer = 500;
-			else if( (millis() - OPTimeLastCANRecieved) < 1000 ) mainLedBlinkTimer = 1000;
-			else mainLedBlinkTimer = 2000; 
+			if(OPLkasActive) mainLedBlinkTimer = 10000;
+			else if( (millis() - OPTimeLastCANRecieved) > 1000 ) mainLedBlinkTimer = 45000;
+			else mainLedBlinkTimer = 20000; 
 
 			if(	(millis() - OPTimeLastCANRecieved) > 55){
 				OPSteeringControlMessageStatusPendingData = false;
@@ -61,7 +61,7 @@ void handleLedFlashing(){
 
 	if( (millis() - lastRedLedToggle ) > mainLedBlinkTimer) {
 		lastRedLedToggle = millis();
-		analogWrite(BLUE_LED,105);
+		analogWrite(BLUE_LED,128);
 	}
 	else digitalWrite(BLUE_LED,0);
 } // end handleLedFlashing()
