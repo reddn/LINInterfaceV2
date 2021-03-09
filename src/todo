@@ -8,6 +8,8 @@ over LKAS torque --- FOUND... 1011 bits
 
 
 
+--. added if's for sending the CAN line data.  DONE 210308
+
 1. shift steer status  
         eps laks disabled
     over 2 to the MSB.
@@ -24,4 +26,6 @@ over LKAS torque --- FOUND... 1011 bits
 
 4. maybe remove EPS_LKAS_DISABLED
 
-5. mod the OP code to work as i want it to...
+5. remove wiggle bit... OP should do this
+
+6. mod the OP code to work as i want it to...

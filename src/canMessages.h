@@ -250,8 +250,10 @@ void handleLkasFromCanV3(){
 			OPSteeringControlMessageStatusPending = true;  //im not sure this should be there TODO: check if its right
 			OPSteeringControlMessageStatusPendingData = true;
 		}
-		sendSteerStatusToCan = 0;
-		send
+		sendSteerMotorTorqueFrameToCan = canMsg.txMsg.bytes[2] & B00000001; //used in a 'if' statement so any non zero number is true
+		sendSteerStatusFrameToCan = canMsg.txMsg.bytes[2] & B00000010; 
+		sendAllLinDataFrameToCan = canMsg.txMsg.bytes[2] & B00000100;
+		sendLinWholeDataFrameToCan = canMsg.txMsg.bytes[2] & B00001000;
 	} else{
 		
 		// TODO: send/set/notify something to show there was an error...

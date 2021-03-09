@@ -90,4 +90,9 @@ extern uint8_t canSteerCounterError ;
 extern uint8_t canSteerCounterFatalError ;
 extern uint8_t EPStoLKASLkasDisabled;
 
+extern uint8_t sendSteerMotorTorqueFrameToCan = 0;
+extern uint8_t sendSteerStatusFrameToCan = 0;
+extern uint8_t sendAllLinDataFrameToCan = 0;
+extern uint8_t sendLinWholeDataFrameToCan = 0;
+
 #endif

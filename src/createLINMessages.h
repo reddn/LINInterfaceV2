@@ -91,19 +91,22 @@ void createKLinMessageWBigSteerAndLittleSteer(uint8_t bigSteer, uint8_t littleSt
 	outputSerial.print("\nL-O:");
 	printArrayInBinary(&msg[0],4);
 #endif
-	CAN_msg_t thisCanMsg;
-	thisCanMsg.id = 0x200;
-	thisCanMsg.len = 6;
-	thisCanMsg.buf[0] = msg[0];
-	thisCanMsg.buf[1] = msg[1];
-	thisCanMsg.buf[2] = msg[2];
-	thisCanMsg.buf[3] = msg[3];
-	thisCanMsg.buf[4] = littleSteer;
-	thisCanMsg.buf[4] |=  bigSteer << 5;
-	thisCanMsg.buf[5] = bigSteer >> 3;
-	// FCAN.write(thisCanMsg);
-	// can.transmit(thisCanMsg.id,thisCanMsg.buf, thisCanMsg.len);
-	sendCanMsg(&thisCanMsg);
+
+	if(sendAllLinDataFrameToCan){
+		CAN_msg_t thisCanMsg;
+		thisCanMsg.id = 0x200;
+		thisCanMsg.len = 6;
+		thisCanMsg.buf[0] = msg[0];
+		thisCanMsg.buf[1] = msg[1];
+		thisCanMsg.buf[2] = msg[2];
+		thisCanMsg.buf[3] = msg[3];
+		thisCanMsg.buf[4] = littleSteer;
+		thisCanMsg.buf[4] |=  bigSteer << 5;
+		thisCanMsg.buf[5] = bigSteer >> 3;
+		// FCAN.write(thisCanMsg);
+		// can.transmit(thisCanMsg.id,thisCanMsg.buf, thisCanMsg.len);
+		sendCanMsg(&thisCanMsg);
+	}
 
 }
 

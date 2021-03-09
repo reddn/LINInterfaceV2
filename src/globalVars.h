@@ -104,7 +104,10 @@ uint8_t canSteerCounterError = 0;
 uint8_t canSteerCounterFatalError = 0;
 uint8_t EPStoLKASLkasDisabled = 0;
 
-
+uint8_t sendSteerMotorTorqueFrameToCan = 0;
+uint8_t sendSteerStatusFrameToCan = 0;
+uint8_t sendAllLinDataFrameToCan = 0;
+uint8_t sendLinWholeDataFrameToCan = 0;
 
 
 #endif

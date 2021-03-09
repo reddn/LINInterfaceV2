@@ -18,7 +18,7 @@ void handleEPStoLKAS(){
         }  
         EPStoLKASBuffer[EPStoLKASBufferCounter] = rcvdByte;
 
-        // if(OPSteeringControlMessageActive){ // not needed since we are just raw dogging the MCU with data from the EPS (EPStoLKAS line)
+        // if(OPSteeringControlMessageActive){ // not needed since we are just sending the MCU with data from the EPS (EPStoLKAS line).. see multiline comment below
         //     switch(EPStoLKASBufferCounter){
         //         case 0:
         //             rcvdByte &= B00100000;
@@ -53,18 +53,19 @@ void handleEPStoLKAS(){
             EPStoLKASLkasDisabled = 1;
             LkasFromCanFatalError = 1; // todo fix uncomment for prodeuction
         }
-        
-        buildSteerMotorTorqueCanMsg();
-        buildSteerStatusCanMsg();
-        if(!OPSteeringControlMessageActive) buildSendAllLinDataCanMsg();
-        else buildSendAllLinDataCanMsg(); // remove this.. only for testing
-        buildSendEps2LkasValuesWhole();     // this is for testing.. to be removed.  remove this
+
+        if( OPSteeringControlMessageActive || sendSteerMotorTorqueFrameToCan) buildSteerMotorTorqueCanMsg();
+        if( OPSteeringControlMessageActive || sendSteerStatusFrameToCan) buildSteerStatusCanMsg();
+        if(!OPSteeringControlMessageActive || sendAllLinDataFrameToCan) buildSendAllLinDataCanMsg();
+        if(sendLinWholeDataFrameToCan) buildSendEps2LkasValuesWhole();     // this is for testing.. to be removed.  remove this
         steerTorque =  (EPStoLKASBuffer[0] << 5 )  & B11100000;
         steerTorque |= EPStoLKASBuffer[1] & B00011111;
         if ( (EPStoLKASBuffer[0] >> 3) == 1 ) { //its negative  // this isn't right... needs to &  B00000001
             steerTorque |= 0xFF00;
         } 
-        // steerTorqueModified = steerTorque + OPApply_steer / 3;
+        /*this is commented out as its not used.. eventually i would like take the 'apply steer' and factor it into the driver steer_torque of EPStoLKAS
+        and feed that back into the MCU to maybe prevent some of the BS FCW warnings*/
+        // steerTorqueModified = steerTorque + OPApply_steer / 3; 
         // steerTorqueModifiedBigValue = (uint8_t) ( steerTorqueModified >> 12 ) & B00001000;
         // steerTorqueModifiedBigValue |= (uint8_t) ( steerTorqueModified >> 5 ) & B11100000;
         // steerTorqueModifiedLittleValue = (uint8_t) steerTorqueModified & B0001111;
