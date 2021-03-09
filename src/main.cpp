@@ -10,9 +10,9 @@
 #include "sendSerial.h"
 
 #define VERSION_YEAR 21
-#define VERSION_MONTH 03
-#define VERSION_DAY 07
-#define VERSION_BUILD 4
+#define VERSION_MONTH 3
+#define VERSION_DAY 9
+#define VERSION_BUILD 1
 #define VERSION_HW 2
 
 
