@@ -88,12 +88,12 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 	// outputSerial.print("\nsending Steer Status Cna MSg");
 	// CAN_message_t msg; // move this to a global so you dont have to re assign the id and len
 	// CAN_msg_t msg;
-	msg.id = 399;
-	msg.len = 4U;
-	msg.buf[0] = EPStoLKASBuffer[0] << 5;   // 3 LSB of BigSteerTorque (4bit)
+	msg.id 		= 399;
+	msg.len 	= 4U;
+	msg.buf[0]  = EPStoLKASBuffer[0] << 5;   // 3 LSB of BigSteerTorque (4bit)
 	msg.buf[0] |= EPStoLKASBuffer[1] & B00011111; // all of smallSteerTorque
-	msg.buf[0] = ~msg.buf[0]; // invert the whole message to make negative positive, positive negative.  OP wants left positive (why??)
-	msg.buf[1] =  ( ~(  EPStoLKASBuffer[0] >>3 ) )   & B00000001; // 1st MSB of bigSteerTorque (4bit) ... added NOT (~) to invert the sign
+	msg.buf[0]  = ~msg.buf[0]; // invert the whole message to make negative positive, positive negative.  OP wants left positive (why??)
+	msg.buf[1]  =  ( ~(  EPStoLKASBuffer[0] >>3 ) )   & B00000001; // 1st MSB of bigSteerTorque (4bit) ... added NOT (~) to invert the sign
 
 
 	//add other data from Teensy so OP can record it
@@ -105,8 +105,10 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 	msg.buf[1] |= EPStoLKASChecksumError << 5;  	// CAN B1 O5
 	msg.buf[1] |= EPStoLKASChecksumFatalError << 6;	// CAN B1 O6
 	msg.buf[1] |= OPSteeringControlMsgActive << 7;	// CAN B1 O7
-	
-	msg.buf[2] = LKAStoEPSForwarding << 5; 		// CAN B2 O5
+
+	msg.buf[2]  =  EPStoLKASBuffer[2] 		& B00000111; //EPS B2 O0-2 into CAN B2 O0-2
+	msg.buf[2] |= (EPStoLKASBuffer[0] >> 1) & B00001000; //EPS B0 O4 into CAN B2 O3
+	msg.buf[2] |= LKAStoEPSForwarding << 5; 		// CAN B2 O5
 	msg.buf[2] |= OPSteeringMsgLate << 6; 			// CAN B2 O6
 	msg.buf[2] |= OPSteeringMsgFatalLate << 7;		// CAN B2 O7
 
@@ -114,7 +116,7 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 	msg.buf[3]  = (canSteerCounterError << 6);		// CAN B3 O6
 	msg.buf[3] |= (canSteerCounterFatalError << 7);	// CAN B3 O7 
 	msg.buf[3] |= honda_compute_checksum(&msg.buf[0], msg.len, (unsigned int) msg.id);
-	// FCAN.write(msg);
+
 	sendCanMsg(&msg);
 }
 // struct msgFrm

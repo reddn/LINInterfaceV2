@@ -10,7 +10,7 @@ over LKAS torque --- FOUND... 1011 bits
 DONE
 --. added if's for sending the CAN line data.  DONE 210308
 
-
+DONE
 1. shift steer status  
         eps laks disabled-- remove
     over 2 to the MSB.
@@ -18,14 +18,14 @@ DONE
     put 
         can steer counter error
         can steer counter fatal
-    to the last byte at the 2 most MSB making a 4 bit hole
+    to the last byte at the 2 most MSB making a 4 bit hole  --- DONE
 
+DONE
+2. put the 4 'unknown bits'  at the new hole at B2 O0-O3  DONE
+DONE
+3. change the DBC as stated above. DOne and ocmmited
 
-2. put the 4 'unknown bits'  at the new hole at B2 O0-O3
-
-3. change the DBC as stated above.
-
-4. maybe remove EPS_LKAS_DISABLED
+4. maybe remove EPS_LKAS_DISABLED DONE.. and from DBC
 
 5. remove wiggle bit... OP should do this
 
