@@ -40,8 +40,8 @@ void handleLKAStoEPS(){
 	//new version
 	if(incomingMsg.totalCounter == 0){   
 		OPSteeringControlMessageActive = OPSteeringControlMessageStatusPending;
-		OPSteeringControlMessageActive = true; /// this was to test if there was other issues.
-		// if(LinInterfaceFatalError) OPLkasActive = false;
+		// OPSteeringControlMessageActive = true; /// this was to test if there was other issues.
+		if(LinInterfaceFatalError) OPLkasActive = false;
 		if(OPSteeringControlMessageActive ){
 			if(OPLkasActive) createKLinMessageWBigSteerAndLittleSteer(OPBigSteer,OPLittleSteer);
             else sendArrayToLKAStoEPSSerial(&lkas_off_array[incomingMsg.counterBit][0]);
