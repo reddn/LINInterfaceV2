@@ -90,9 +90,13 @@ extern uint8_t canSteerCounterError ;
 extern uint8_t canSteerCounterFatalError ;
 extern uint8_t EPStoLKASLkasDisabled;
 
-extern uint8_t sendSteerMotorTorqueFrameToCan = 0;
-extern uint8_t sendSteerStatusFrameToCan = 0;
-extern uint8_t sendAllLinDataFrameToCan = 0;
-extern uint8_t sendLinWholeDataFrameToCan = 0;
+extern uint8_t sendSteerMotorTorqueFrameToCan;
+extern uint8_t sendSteerStatusFrameToCan;
+extern uint8_t sendAllLinDataFrameToCan;
+extern uint8_t sendLinWholeDataFrameToCan;
+
+extern uint8_t LKAStoEPS_LDW_Signals;
+
+extern uint8_t enableLinWiggleBitFromCan;
 
 #endif

@@ -8,3 +8,9 @@ mlocoteta tested on 210304 by allowing 250/251 to be sent on steer_torque.  prev
         EPS B0O4
         EPS B2O0
         EPS B2O1
+
+
+LKAS unk signal 2 stays on for 11 frames .. off for 27 then both Singal 1 and 2 go high for 2 frames w LKAS_ENABLED
+
+when goin goff .4 seconds later (40 frames?) Signal1 and 2 stay high with lkas active for 5 frames
+then only signal 2 stays high for 6 frames 

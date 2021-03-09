@@ -64,10 +64,11 @@ void createKLinMessageWBigSteerAndLittleSteer(uint8_t bigSteer, uint8_t littleSt
 		bigSteer = 0;
 		LkasOnIntroCountDown--;
 	} else {
-		if(littleSteer > 0 || bigSteer > 0){ // little steer bit wiggle.. TODO: move this to OP carcontroller.py
+		if( (littleSteer > 0 || bigSteer > 0 ) && enableLinWiggleBitFromCan){ // little steer bit wiggle.. TODO: move this to OP carcontroller.py
 			littleSteer = littleSteer & B00011110;
 			littleSteer = littleSteer | ( (lastLittleSteer1bit ^ 1 ) & B00000001);
 		}
+		
 	}
 
 	msg[0] = (incomingMsg.counterBit << 5) |  bigSteer;
@@ -77,6 +78,7 @@ void createKLinMessageWBigSteerAndLittleSteer(uint8_t bigSteer, uint8_t littleSt
 	//								   ^ lkas on
 	msg[2] = 0x80; // this is static 0x80 = 1000 0000
 	//										 ^ lkas on (1 is off)
+	msg[2] |= LKAStoEPS_LDW_Signals; // this is & B00110000 when it comes in on the can bus
 	msg[3] = chksm(msg[0], msg[1], msg[2]);
 
 

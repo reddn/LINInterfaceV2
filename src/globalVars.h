@@ -109,5 +109,8 @@ uint8_t sendSteerStatusFrameToCan = 0;
 uint8_t sendAllLinDataFrameToCan = 0;
 uint8_t sendLinWholeDataFrameToCan = 0;
 
+uint8_t LKAStoEPS_LDW_Signals = 0;
+
+uint8_t enableLinWiggleBitFromCan = 0;
 
 #endif

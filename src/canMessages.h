@@ -54,7 +54,7 @@ void buildSteerMotorTorqueCanMsg(){ //TODO: add to decclaration
 	
 	msg.buf[1] =  ( EPStoLKASBuffer[2] >> 4 ) & B00000011; // 2 MSB of bigSteerTorque 	//redone this is the 2LSB of little torque steer on the MSB of the next byte
 	msg.buf[1] |= ( incomingMsg.data[0] >> 2 ) & B00000100; //LKAS B0 O4  into CAN B1 O2
-	msg.buf[1] |= ( EPStoLKASBuffer[1] ) // EPS B1 O5 (EPS_LKAS_ON aka LKAS_ON_FROM_EPS)
+	msg.buf[1] |= ( EPStoLKASBuffer[1] ); // EPS B1 O5 (EPS_LKAS_ON aka LKAS_ON_FROM_EPS)
 
 	msg.buf[2] =  (OPCanCounter << 4 ); // put in the counter
 	msg.buf[2] |= ( EPStoLKASBuffer[0]   ) & B01000000; //EPS  B0 O6  into CAN B2 O6
@@ -247,6 +247,8 @@ void handleLkasFromCanV3(){
 		sendSteerStatusFrameToCan = canMsg.txMsg.bytes[2] & B00000010; 
 		sendAllLinDataFrameToCan = canMsg.txMsg.bytes[2] & B00000100;
 		sendLinWholeDataFrameToCan = canMsg.txMsg.bytes[2] & B00001000;
+		LKAStoEPS_LDW_Signals = canMsg.txMsg.bytes[2] & B00110000;
+		enableLinWiggleBitFromCan = canMsg.txMsg.bytes[2] & B01000000;
 	} else{
 		
 		// TODO: send/set/notify something to show there was an error...
