@@ -21,14 +21,14 @@ void handleLKAStoEPS(){
 	deconstructLKASMessage(rcvdByte);
 	
 	// OLD version
-    // if(OPSteeringControlMessageActive && !LkasFromCanFatalError){
+    // if(OPSteeringControlMessageActive && !LinInterfaceFatalError){
     //     
     //     if(incomingMsg.counterBit == 0){
     //         if(OPLkasActive) createKLinMessageWBigSteerAndLittleSteer(OPBigSteer,OPLittleSteer);
     //         else sendArrayToLKAStoEPSSerial(&lkas_off_array[incomingMsg.counterBit][0]); 
     //     }
     //     if(	(millis() - OPTimeLastCANRecieved) > 50 ){
-    //         LkasFromCanFatalError = true;
+    //         LinInterfaceFatalError = true;
     //         LkasFromCanStatus = 1;
     //     }
     // } if(OPSteeringControlMessageActive) {
@@ -41,7 +41,7 @@ void handleLKAStoEPS(){
 	if(incomingMsg.totalCounter == 0){   
 		OPSteeringControlMessageActive = OPSteeringControlMessageStatusPending;
 		OPSteeringControlMessageActive = true; /// this was to test if there was other issues.
-		// if(LkasFromCanFatalError) OPLkasActive = false;
+		// if(LinInterfaceFatalError) OPLkasActive = false;
 		if(OPSteeringControlMessageActive ){
 			if(OPLkasActive) createKLinMessageWBigSteerAndLittleSteer(OPBigSteer,OPLittleSteer);
             else sendArrayToLKAStoEPSSerial(&lkas_off_array[incomingMsg.counterBit][0]);

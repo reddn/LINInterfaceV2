@@ -28,13 +28,13 @@ void handleInputReads(){
 		handleLedFlashing();
 		handleSendFirmwareVersion();
 		if(LkasFromCanChecksumErrorCount > 2){
-			LkasFromCanFatalError = 1;
+			LinInterfaceFatalError = 1;
 			canSteerChecksumFatalError = 1;
 		} else  LkasFromCanChecksumErrorCount = 0;;
 
 		if(LkasFromCanCounterErrorCount > 2) {
 			canSteerCounterFatalError = 1;
-			LkasFromCanFatalError = 1;
+			LinInterfaceFatalError = 1;
 		} else LkasFromCanCounterErrorCount = 0;
 
 
@@ -46,7 +46,7 @@ void handleInputReads(){
 			if(	(millis() - OPTimeLastCANRecieved) > 55){
 				OPSteeringControlMessageStatusPendingData = false;
 				OPSteeringControlMessageStatusPending = true;
-				LkasFromCanFatalError = 1;
+				LinInterfaceFatalError = 1;
 				OPSteeringMsgFatalLate = 1;
 			}
 		}
@@ -57,7 +57,7 @@ void handleInputReads(){
 
 void handleLedFlashing(){
 	
-	digitalWrite(STATUS_LED,LkasFromCanFatalError);
+	digitalWrite(STATUS_LED,LinInterfaceFatalError);
 
 	if( (millis() - lastRedLedToggle ) > mainLedBlinkTimer) {
 		lastRedLedToggle = millis();

@@ -51,7 +51,7 @@ void handleEPStoLKAS(){
 
         if( ( (EPStoLKASBuffer[2] >> 2 ) & 1U ) == 1) {
             EPStoLKASLkasDisabled = 1;
-            LkasFromCanFatalError = 1; // todo fix uncomment for prodeuction
+            LinInterfaceFatalError = 1; // todo fix uncomment for prodeuction
         }
 
         if( OPSteeringControlMessageActive || sendSteerMotorTorqueFrameToCan) buildSteerMotorTorqueCanMsg();

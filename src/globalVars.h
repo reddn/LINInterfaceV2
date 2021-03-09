@@ -68,7 +68,7 @@ uint8_t LkasFromCanCounterErrorCount = 0;
 
 uint8_t LkasFromCanChecksumErrorCount = 0;
 
-uint8_t LkasFromCanFatalError = 0;
+uint8_t LinInterfaceFatalError = 0;
 
 uint8_t OPCanCounter = 0;
 

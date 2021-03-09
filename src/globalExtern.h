@@ -56,7 +56,7 @@ extern uint8_t LkasFromCanCounterErrorCount ;
 
 extern uint8_t LkasFromCanChecksumErrorCount ;
 
-extern uint8_t LkasFromCanFatalError ;
+extern uint8_t LinInterfaceFatalError ;
 
 extern uint8_t OPCanCounter ;
 

@@ -99,7 +99,7 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 	//add other data from Teensy so OP can record it
 	
 	msg.buf[1] |= OPLkasActive << 1;  				// CAN B1 O1
-	msg.buf[1] |= LkasFromCanFatalError << 2; 		// CAN B1 O2
+	msg.buf[1] |= LinInterfaceFatalError << 2; 		// CAN B1 O2
 	msg.buf[1] |= canSteerChecksumError << 3; 		// CAN B1 O3
 	msg.buf[1] |= canSteerChecksumFatalError << 4; 	// CAN B1 O4
 	msg.buf[1] |= EPStoLKASChecksumError << 5;  	// CAN B1 O5
@@ -199,7 +199,7 @@ void handleLkasFromCanV3(){
 		counterVerified = false;
 		if(LkasFromCanCounterErrorCount > 2) {
 			canSteerCounterFatalError = 1;
-			LkasFromCanFatalError = 1;
+			LinInterfaceFatalError = 1;
 		}
 	} else {
 		canSteerCounterError = 0;
@@ -216,7 +216,7 @@ void handleLkasFromCanV3(){
 		LkasFromCanChecksumErrorCount++;
 		canSteerChecksumError = 1;
 		if(LkasFromCanChecksumErrorCount > 2){
-			LkasFromCanFatalError = 1;
+			LinInterfaceFatalError = 1;
 			canSteerChecksumFatalError = 1;
 		}
 	}
@@ -248,7 +248,7 @@ void handleLkasFromCanV3(){
 		sendAllLinDataFrameToCan = canMsg.txMsg.bytes[2] & B00000100;
 		sendLinWholeDataFrameToCan = canMsg.txMsg.bytes[2] & B00001000;
 		LKAStoEPS_LDW_Signals = canMsg.txMsg.bytes[2] & B00110000;
-		enableLinWiggleBitFromCan = canMsg.txMsg.bytes[2] & B01000000;
+		disableLinWiggleBitFromCan = canMsg.txMsg.bytes[2] & B01000000;
 	} else{
 		
 		// TODO: send/set/notify something to show there was an error...
