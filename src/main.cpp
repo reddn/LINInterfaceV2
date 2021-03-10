@@ -9,10 +9,14 @@
 #include "struct.h"
 #include "sendSerial.h"
 
+
+#define VERSION_NUM 1
+#define VERSION_NUM_1ST 0
+#define VERSION_NUM_2ND 0
 #define VERSION_YEAR 21
 #define VERSION_MONTH 3
 #define VERSION_DAY 9
-#define VERSION_BUILD 8
+#define VERSION_BUILD 9
 #define VERSION_HW 2
 
 
@@ -92,12 +96,15 @@ void handleSendFirmwareVersion(){
 	if(sendFirmwareToCanCounter++ == 0){
 		CAN_msg_t thisCanMsg;
 		thisCanMsg.id = 0x208;
-		thisCanMsg.len = 5;
-		thisCanMsg.buf[0] = VERSION_YEAR;
-		thisCanMsg.buf[1] = VERSION_MONTH;
-		thisCanMsg.buf[2] = VERSION_DAY;
-		thisCanMsg.buf[3] = VERSION_BUILD;
-		thisCanMsg.buf[4] = VERSION_HW;
+		thisCanMsg.len = 8;
+		thisCanMsg.buf[0] = VERSION_NUM;
+		thisCanMsg.buf[1] = VERSION_NUM_1ST;
+		thisCanMsg.buf[2] = VERSION_NUM_2ND;
+		thisCanMsg.buf[3] = VERSION_YEAR;
+		thisCanMsg.buf[4] = VERSION_MONTH;
+		thisCanMsg.buf[5] = VERSION_DAY;
+		thisCanMsg.buf[6] = VERSION_BUILD;
+		thisCanMsg.buf[7] = VERSION_HW;
 		// FCAN.write(thisCanMsg);
 		// can.transmit(thisCanMsg.id,thisCanMsg.buf, thisCanMsg.len);
 		sendCanMsg(&thisCanMsg);
