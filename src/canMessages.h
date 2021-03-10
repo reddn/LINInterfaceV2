@@ -113,7 +113,7 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 	msg.buf[2] |= OPSteeringMsgFatalLate << 7;		// CAN B2 O7
 
 	msg.buf[3]  = (OPCanCounter << 4 );				// put in the counter
-	msg.buf[3]  = (canSteerCounterError << 6);		// CAN B3 O6
+	msg.buf[3] |= (canSteerCounterError << 6);		// CAN B3 O6
 	msg.buf[3] |= (canSteerCounterFatalError << 7);	// CAN B3 O7 
 	msg.buf[3] |= honda_compute_checksum(&msg.buf[0], msg.len, (unsigned int) msg.id);
 
