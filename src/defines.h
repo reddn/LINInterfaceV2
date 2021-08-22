@@ -26,7 +26,7 @@
 #define EPStoLKASCanMsgId 0x201
 #define LKAStoEPSCanMsgId 0x1AB //this is Steer torque request DEC 427
 
-#define SteerTorqueSensorCanMsgId 0x199 // TODO:  is in DEC 399
+#define SteerTorqueSensorCanMsgId 0x19a // 400 .  moved from 399 due to 18 mdx hybrid conflict
 
 #define LKAStoEPSLinDataRxMsgId 0x202 //this is the data originated by the MCU that is suppose to go to the EPS.  this is only for testing and to further figure out what the EPStoLKAS data stream is (bytes 3 and 4 of the frame)
 #define EPStoLKASLinDataRxMsgId 0x203 // see above
