@@ -88,7 +88,7 @@ void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 	// outputSerial.print("\nsending Steer Status Cna MSg");
 	// CAN_message_t msg; // move this to a global so you dont have to re assign the id and len
 	// CAN_msg_t msg;
-	msg.id 		= 399;
+	msg.id 		= 400;
 	msg.len 	= 4U;
 	msg.buf[0]  = EPStoLKASBuffer[0] << 5;   // 3 LSB of BigSteerTorque (4bit)
 	msg.buf[0] |= EPStoLKASBuffer[1] & B00011111; // all of smallSteerTorque
