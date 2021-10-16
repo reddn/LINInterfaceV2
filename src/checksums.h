@@ -55,7 +55,6 @@ uint8_t chksm_old(uint8_t firstByte, uint8_t secondByte, uint8_t thirdByte){
 uint8_t honda_compute_checksum(uint8_t *steerTorqueAndMotorTorque, uint8_t len, unsigned int addr) {
 //   int len = GET_LEN(to_push);
   uint8_t checksum = 0U;
-//   unsigned int addr =  399U; //this should be set up top... 399 is STEER STATUS
   while (addr > 0U) {
     checksum += (addr & 0xFU); addr >>= 4;
   }
