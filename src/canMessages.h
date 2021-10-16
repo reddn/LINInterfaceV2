@@ -43,27 +43,24 @@ CAN_msg_t msg;
 //removed
 // SG_ CONFIG_VALID : 7|1@0+ (1,0) [0|1] "" EON   << not used
 
-void buildSteerMotorTorqueCanMsg(){ //TODO: add to decclaration
-	//outputSerial.print("\nSendingSteer TOrque Can MSg");
-	// msgFrm msg; // move this to a global to save the assignment of id and len
-	// CAN_msg_t msg;
-	msg.id = 427;
-	msg.len = 3;
-	msg.buf[0] =  ( EPStoLKASBuffer[2] << 2 ) & B11100000;  //1 LSB bit of bigSteerTorque /// redone> this is the big torque steer 
-	msg.buf[0] |= ( EPStoLKASBuffer[3] >> 2)  & B00011111 ; // all of SmallSteerTorque   ///redone this is the 5MSB of little torque steer
-	
-	msg.buf[1] =  ( EPStoLKASBuffer[2] >> 4 ) & B00000011; // 2 MSB of bigSteerTorque 	//redone this is the 2LSB of little torque steer on the MSB of the next byte
-	msg.buf[1] |= ( incomingMsg.data[0] >> 2 ) & B00000100; //LKAS B0 O4  into CAN B1 O2
-	msg.buf[1] |= ( EPStoLKASBuffer[1] ); // EPS B1 O5 (EPS_LKAS_ON aka LKAS_ON_FROM_EPS)
+void buildSteerMotorTorqueCanMsg(){ 
+    msg.id = 427;
+    msg.len = 3;
+    //msg.buf[0] and [1] is refactored due to bug 2021/06/30 -tom
+    msg.buf[0] =  ( EPStoLKASBuffer[2] << 4 ) & B10000000; // push the last bit of the Big motor torque(3 bits) on the MSB (7th bit) of the first byte of the 10 bit signal
+    msg.buf[0] |= EPStoLKASBuffer[3] & B01111111; // move the Small Motor Torque (7bits) into the rest of the first byte (bits 0-6)
+    msg.buf[1] =  ( EPStoLKASBuffer[2] >> 4 ) & B00000011; // move the 2 MSB of Big Steer (3 bit) into the LSB of the 2nd byte (bits 0 and 1) containing the 2 MSB of the signal 
 
-	msg.buf[2] =  (OPCanCounter << 4 ); // put in the counter
-	msg.buf[2] |= ( EPStoLKASBuffer[0]   ) & B01000000; //EPS  B0 O6  into CAN B2 O6
-	msg.buf[2] |= ( EPStoLKASBuffer[1]  << 1 ) & B10000000; //EPS  B1 O6  into CAN B2 O7  //dont know if this does anything,keeping
+    msg.buf[1] |= ( incomingMsg.data[0] >> 2 ) & B00000100; //LKAS B0 O4  into CAN B1 O2
+    msg.buf[1] |= ( EPStoLKASBuffer[1]  & B00100000); // EPS B1 O5 (EPS_LKAS_ON aka LKAS_ON_FROM_EPS)
 
-	msg.buf[2] |= honda_compute_checksum(&msg.buf[0],3,(unsigned int)msg.id);
-	
-	sendCanMsg(&msg);
+    msg.buf[2] =  (OPCanCounter << 4 ); // put in the counter
+    msg.buf[2] |= ( EPStoLKASBuffer[0]   ) & B01000000; //EPS  B0 O6  into CAN B2 O6
+    msg.buf[2] |= ( EPStoLKASBuffer[1]  << 1 ) & B10000000; //EPS  B1 O6  into CAN B2 O7  //dont know if this does anything,keeping
 
+    msg.buf[2] |= honda_compute_checksum(&msg.buf[0],3,(unsigned int)msg.id);
+    
+    sendCanMsg(&msg);
 }
 
 
