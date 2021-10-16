@@ -66,23 +66,6 @@ void buildSteerMotorTorqueCanMsg(){ //TODO: add to decclaration
 
 }
 
-
-///// the only thing in this DBC that should be used is steeor_troque_sensor
-// BO_ 399 STEER_STATUS: 3 EPS
-//  SG_ COUNTER : 21|2@0+ (1,0) [0|3] "" EON
-//  SG_ CHECKSUM : 19|4@0+ (1,0) [0|3] "" EON
-//  SG_ STEER_TORQUE_SENSOR : 0|9@1- (1,0) [-256|256] "" XXX
-
-
-// T T T T  T T T T
-// S S S S  E L 0 T
-// 0 0 C C  H H H H
-//removed
-//  SG_ STEER_STATUS : 39|4@0+ (1,0) [0|15] "" EON
-//  SG_ STEER_CONTROL_ACTIVE : 35|1@0+ (1,0) [0|1] "" EON
-//  SG_ STEER_CONFIG_INDEX : 43|4@0+ (1,0) [0|15] "" EON
-//  SG_ STEER_ANGLE_RATE : 23|16@0- (-0.1,0) [-31000|31000] "deg/s" EON << TODO: check if OP uses this or the other STEER_ANGLE_RATE .. this one will not work
-
 void buildSteerStatusCanMsg(){ //TODO: add to decclaration
 	
 	// outputSerial.print("\nsending Steer Status Cna MSg");
